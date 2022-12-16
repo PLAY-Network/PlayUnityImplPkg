@@ -10,13 +10,12 @@ namespace RGN.Impl.Firebase.Core.Auth
     {
         private readonly FirebaseAuth firebaseAuth;
 
-        IUser IAuth.CurrentUser => new User(firebaseAuth.CurrentUser); //TODO: cache it
+        IUser IAuth.CurrentUser => firebaseAuth.CurrentUser == null ? null : new User(firebaseAuth.CurrentUser); //TODO: cache it
 
-        IFaceBookAuthProvider IAuth.faceBookAuthProvider { get; set; }
-
-        IEmailAuthProvider IAuth.emailAuthProvider { get; set; }
-
-        IGoogleAuthProvider IAuth.googleAuthProvider { get; set; }
+        public IFaceBookAuthProvider faceBookAuthProvider { get; set; }
+        public IEmailAuthProvider emailAuthProvider { get; set; }
+        public IGoogleAuthProvider googleAuthProvider { get; set; }
+        public IOAuthProvider oAuthProvider { get; set; }
 
         event EventHandler IAuth.StateChanged
         {
@@ -33,6 +32,10 @@ namespace RGN.Impl.Firebase.Core.Auth
         internal Auth(FirebaseAuth firebaseAuth)
         {
             this.firebaseAuth = firebaseAuth;
+            faceBookAuthProvider = new FaceBookAuthProvider();
+            emailAuthProvider = new EmailAuthProvider();
+            googleAuthProvider = new GoogleAuthProvider();
+            oAuthProvider = new OAuthProvider();
         }
 
         Task IAuth.SendPasswordResetEmailAsync(string email)

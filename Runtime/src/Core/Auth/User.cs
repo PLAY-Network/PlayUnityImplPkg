@@ -27,6 +27,7 @@ namespace RGN.Impl.Firebase.Core.Auth
         internal User(FirebaseUser firebaseUser)
             : base(firebaseUser)
         {
+            Utility.ThrowIf.Argument.IsNull(firebaseUser, nameof(firebaseUser));
             this.firebaseUser = firebaseUser;
         }
 
