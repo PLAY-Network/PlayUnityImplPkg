@@ -1,5 +1,6 @@
-﻿using ReadyGamesNetwork.RGN.Dependencies.Engine;
+using ReadyGamesNetwork.RGN.Dependencies.Engine;
 using RGN.Dependencies.Engine;
+using RGN.Utility;
 using UnityEngine;
 
 namespace RGN.Impl.Firebase.Engine
@@ -22,6 +23,11 @@ namespace RGN.Impl.Firebase.Engine
             Object.DontDestroyOnLoad(go);
             RGNUnityUpdater updater = go.AddComponent<RGNUnityUpdater>();
             return updater;
+        }
+        public void DestroyGameObjectWithUpdater(IRGNUpdater rgnUpdater)
+        {
+            var asComponent = rgnUpdater as RGNUnityUpdater;
+            Object.Destroy(asComponent?.gameObject);
         }
 
         ITexture2D IEngineApp.CreateTexture2D(int width, int height)

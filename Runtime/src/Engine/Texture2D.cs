@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Engine;
+using RGN.Dependencies.Engine;
 using UnityEngine;
 
 namespace RGN.Impl.Firebase.Engine
@@ -20,10 +20,13 @@ namespace RGN.Impl.Firebase.Engine
         {
             return texture.EncodeToPNG();
         }
-
         bool ITexture2D.LoadImage(byte[] data)
         {
             return texture.LoadImage(data);
+        }
+        object ITexture2D.GetWrappedTexture()
+        {
+            return texture;
         }
     }
 }

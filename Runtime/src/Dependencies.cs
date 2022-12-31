@@ -20,53 +20,59 @@ namespace RGN.Impl.Firebase
 {
     public sealed class Dependencies : IDependencies
     {
-        public IApp app { get; }
-        public IApp readyMasterApp { get; }
-        public IAuth auth { get; }
-        public IAuth readyMasterAuth { get; }
-        public IFunctions fn { get; }
-        public IFunctions readyMasterFunction { get; }
-        public IStorage storage { get; }
-        public IStorage readyMasterStorage { get; }
-        public IDocumentDB readyMasterFirestore { get; }
-        public IRealTimeDB realtimeDatabase { get; }
-        public IDynamicLinks dynamicLinks { get; }
-        public IMessaging messaging { get; }
+        public IApplicationStore ApplicationStore { get; }
+        public IApp App { get; }
+        public IApp ReadyMasterApp { get; }
+        public IAuth Auth { get; }
+        public IAuth ReadyMasterAuth { get; }
+        public IFunctions Fn { get; }
+        public IFunctions ReadyMasterFunction { get; }
+        public IStorage Storage { get; }
+        public IStorage ReadyMasterStorage { get; }
+        public IDocumentDB ReadyMasterFirestore { get; }
+        public IRealTimeDB RealtimeDatabase { get; }
+        public IDynamicLinks DynamicLinks { get; }
+        public IMessaging Messaging { get; }
         public IJson Json { get; }
         public IEngineApp EngineApp { get; }
         public ITime Time { get; }
         public ILogger Logger { get; }
 
-        public Dependencies(Core.AppOptions readyMasterAuthOptions, string readyMasterStorageUrl)
+        public Dependencies()
+            : this(RGN.ApplicationStore.LoadFromResources())
         {
+        }
+        public Dependencies(IApplicationStore applicationStore)
+        {
+            ApplicationStore = applicationStore;
             var app = FirebaseApp.DefaultInstance;
-            this.app = new Core.App(app);
+            App = new Core.App(app);
             AppOptions appOptions = new AppOptions()
             {
-                DatabaseUrl = readyMasterAuthOptions.DatabaseUrl,
-                AppId = readyMasterAuthOptions.AppId,
-                ApiKey = readyMasterAuthOptions.ApiKey,
-                MessageSenderId = readyMasterAuthOptions.MessageSenderId,
-                StorageBucket = readyMasterAuthOptions.StorageBucket,
-                ProjectId = readyMasterAuthOptions.ProjectId,
+                DatabaseUrl = applicationStore.GetRGNMasterDatabaseUrl,
+                AppId = applicationStore.GetRGNMasterAppID,
+                ApiKey = applicationStore.GetRGNMasterApiKey,
+                MessageSenderId = applicationStore.GetRGNMasterMessageSenderId,
+                StorageBucket = applicationStore.GetRGNMasterStorageBucket,
+                ProjectId = applicationStore.GetRGNMasterProjectId,
             };
-            var readyMasterApp = FirebaseApp.Create(appOptions, "Secondary");
-            this.readyMasterApp = new Core.App(readyMasterApp);
+            var readyMasterApp = FirebaseApp.Create(appOptions, RGNCore.READY_MASTER_APP_CONFIG_NAME);
+            ReadyMasterApp = new Core.App(readyMasterApp);
 
-            auth = new Core.Auth.Auth(FirebaseAuth.GetAuth(app));
-            readyMasterAuth = new Core.Auth.Auth(FirebaseAuth.GetAuth(readyMasterApp));
+            Auth = new Core.Auth.Auth(FirebaseAuth.GetAuth(app));
+            ReadyMasterAuth = new Core.Auth.Auth(FirebaseAuth.GetAuth(readyMasterApp));
 
-            fn = new Core.Functions.Functions(FirebaseFunctions.GetInstance(app));
-            readyMasterFunction = new Core.Functions.Functions(FirebaseFunctions.GetInstance(readyMasterApp));
+            Fn = new Core.Functions.Functions(FirebaseFunctions.GetInstance(app));
+            ReadyMasterFunction = new Core.Functions.Functions(FirebaseFunctions.GetInstance(readyMasterApp));
 
-            readyMasterFirestore = new Core.DocumentDB(FirebaseFirestore.GetInstance(readyMasterApp));
-            realtimeDatabase = new Core.RealTimeDB.RealTimeDB(FirebaseDatabase.GetInstance(app));
+            ReadyMasterFirestore = new Core.DocumentDB(FirebaseFirestore.GetInstance(readyMasterApp));
+            RealtimeDatabase = new Core.RealTimeDB.RealTimeDB(FirebaseDatabase.GetInstance(app));
 
-            storage = new Core.Storage.Storage(FirebaseStorage.GetInstance(app));
-            readyMasterStorage = new Core.Storage.Storage(FirebaseStorage.GetInstance(readyMasterApp, readyMasterStorageUrl));
+            Storage = new Core.Storage.Storage(FirebaseStorage.GetInstance(app));
+            ReadyMasterStorage = new Core.Storage.Storage(FirebaseStorage.GetInstance(readyMasterApp, applicationStore.GetRGNStorageURL));
 
-            dynamicLinks = new Core.DynamicLinks.DynamicLinks();
-            messaging = new Core.Messaging.Messaging();
+            DynamicLinks = new Core.DynamicLinks.DynamicLinks();
+            Messaging = new Core.Messaging.Messaging();
 
             Json = new Serialization.Json();
             EngineApp = new Engine.EngineApp();
