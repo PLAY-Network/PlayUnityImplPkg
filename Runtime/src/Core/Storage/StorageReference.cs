@@ -62,7 +62,13 @@ namespace RGN.Impl.Firebase.Core.Storage
                 firebaseProgressHandler,
                 cancelToken,
                 previousSessionUri);
+            
             return new StorageMetadata(); // TODO: use the result
+        }
+        
+        async Task IStorageReference.DeleteAsync()
+        {
+            await firebaseStorageReference.DeleteAsync();
         }
     }
 }
