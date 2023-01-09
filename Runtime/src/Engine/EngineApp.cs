@@ -1,6 +1,4 @@
-using ReadyGamesNetwork.RGN.Dependencies.Engine;
 using RGN.Dependencies.Engine;
-using RGN.Utility;
 using UnityEngine;
 
 namespace RGN.Impl.Firebase.Engine
@@ -16,6 +14,15 @@ namespace RGN.Impl.Firebase.Engine
             Application.platform == RuntimePlatform.OSXEditor ||
             Application.platform == RuntimePlatform.WindowsEditor ||
             Application.platform == RuntimePlatform.LinuxEditor;
+
+        public ISystemInfo SystemInfo { get; }
+        public IPlayerPrefs PlayerPrefs { get; }
+
+        internal EngineApp()
+        {
+            SystemInfo = new SystemInfo();
+            PlayerPrefs = new PlayerPrefs();
+        }
 
         IRGNUpdater IEngineApp.CreateGameObjectWithUpdater()
         {

@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Core.DynamicLinks;
+using RGN.Dependencies.Core.DynamicLinks;
 using System;
 using System.Collections.Generic;
 
@@ -19,6 +19,10 @@ namespace RGN.Impl.Firebase.Core.DynamicLinks
             {
                 Action<object, IReceivedDynamicLinkEventArgs> toUnsubcribe = value;
                 var listener = listeners.Find((binder) => binder.ToSubcribe == toUnsubcribe);
+                if (listener == null)
+                {
+                    return;
+                }
                 listener.Dispose();
                 listeners.Remove(listener);
             }

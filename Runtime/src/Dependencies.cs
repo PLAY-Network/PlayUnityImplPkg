@@ -4,7 +4,6 @@ using Firebase.Database;
 using Firebase.Firestore;
 using Firebase.Functions;
 using Firebase.Storage;
-using ReadyGamesNetwork.RGN.Dependencies.Engine;
 using RGN.Dependencies;
 using RGN.Dependencies.Core;
 using RGN.Dependencies.Core.Auth;

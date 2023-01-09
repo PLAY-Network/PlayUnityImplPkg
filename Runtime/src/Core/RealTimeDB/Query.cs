@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Core.RealTimeDB;
+using RGN.Dependencies.Core.RealTimeDB;
 using System;
 using System.Collections.Generic;
 using FirebaseQuery = Firebase.Database.Query;
@@ -21,6 +21,10 @@ namespace RGN.Impl.Firebase.Core.RealTimeDB
             {
                 EventHandler<ValueChangedEventArgs> toUnsubcribe = value;
                 var listener = valueChangedListeners.Find((binder) => binder.ToSubcribe == toUnsubcribe);
+                if (listener == null)
+                {
+                    return;
+                }
                 listener.Dispose();
                 valueChangedListeners.Remove(listener);
             }

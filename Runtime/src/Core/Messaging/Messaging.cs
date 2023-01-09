@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Core.Messaging;
+using RGN.Dependencies.Core.Messaging;
 using System;
 using System.Collections.Generic;
 
@@ -20,6 +20,10 @@ namespace RGN.Impl.Firebase.Core.Messaging
             {
                 Action<object, ITokenReceivedEventArgs> toUnsubcribe = value;
                 var listener = tokenListeners.Find((binder) => binder.ToSubcribe == toUnsubcribe);
+                if (listener == null)
+                {
+                    return;
+                }
                 listener.Dispose();
                 tokenListeners.Remove(listener);
             }
@@ -36,6 +40,10 @@ namespace RGN.Impl.Firebase.Core.Messaging
             {
                 Action<object, IMessageReceivedEventArgs> toUnsubcribe = value;
                 var listener = messageListeners.Find((binder) => binder.ToSubcribe == toUnsubcribe);
+                if (listener == null)
+                {
+                    return;
+                }
                 listener.Dispose();
                 messageListeners.Remove(listener);
             }
