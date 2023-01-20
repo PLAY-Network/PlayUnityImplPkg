@@ -22,6 +22,7 @@ namespace RGN.Impl.Firebase
         public IApplicationStore ApplicationStore { get; }
         public IApp App { get; }
         public IApp ReadyMasterApp { get; }
+        public IAnalytics Analytics { get; }
         public IAuth Auth { get; }
         public IAuth ReadyMasterAuth { get; }
         public IFunctions Fn { get; }
@@ -77,6 +78,7 @@ namespace RGN.Impl.Firebase
             EngineApp = new Engine.EngineApp();
             Time = new Engine.Time();
             Logger = new Engine.Logger();
+            Analytics = new Core.Analytics();
         }
     }
 }
