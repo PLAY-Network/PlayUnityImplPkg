@@ -27,10 +27,9 @@ namespace RGN.Impl.Firebase
         public IAuth ReadyMasterAuth { get; }
         public IFunctions Fn { get; }
         public IFunctions ReadyMasterFunction { get; }
-        public IStorage Storage { get; }
         public IStorage ReadyMasterStorage { get; }
         public IDocumentDB ReadyMasterFirestore { get; }
-        public IRealTimeDB RealtimeDatabase { get; }
+        public IRealTimeDB ReadyMasterRealtimeDatabase { get; }
         public IDynamicLinks DynamicLinks { get; }
         public IMessaging Messaging { get; }
         public IJson Json { get; }
@@ -66,9 +65,8 @@ namespace RGN.Impl.Firebase
             ReadyMasterFunction = new Core.Functions.Functions(FirebaseFunctions.GetInstance(readyMasterApp));
 
             ReadyMasterFirestore = new Core.DocumentDB(FirebaseFirestore.GetInstance(readyMasterApp));
-            RealtimeDatabase = new Core.RealTimeDB.RealTimeDB(FirebaseDatabase.GetInstance(app));
+            ReadyMasterRealtimeDatabase = new Core.RealTimeDB.RealTimeDB(FirebaseDatabase.GetInstance(readyMasterApp));
 
-            Storage = new Core.Storage.Storage(FirebaseStorage.GetInstance(app));
             ReadyMasterStorage = new Core.Storage.Storage(FirebaseStorage.GetInstance(readyMasterApp, applicationStore.GetRGNStorageURL));
 
             DynamicLinks = new Core.DynamicLinks.DynamicLinks();
