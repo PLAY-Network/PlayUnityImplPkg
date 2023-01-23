@@ -11,7 +11,8 @@ namespace RGN.Impl.Firebase
             {
                 return;
             }
-            await RGNCoreBuilder.BuildAsync(new Dependencies());
+            RGNCoreBuilder.CreateInstance(new Dependencies());
+            await RGNCoreBuilder.BuildAsync();
             _initialized = true;
         }
     }
