@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Firebase.Analytics;
 using Firebase.Crashlytics;
 using RGN.Dependencies.Core;
@@ -9,6 +10,11 @@ namespace RGN.Impl.Firebase.Core
     {
         private readonly List<Parameter> mLogEventParams = new List<Parameter>();
         private bool _disabled;
+
+        public Task<string> GetAnalyticsInstanceIdAsync()
+        {
+            return FirebaseAnalytics.GetAnalyticsInstanceIdAsync();
+        }
         public void Init()
         {
         }
