@@ -26,10 +26,19 @@
     "/ReadyGamesNetwork.meta",
     "/Runtime",
     "/Runtime.meta",
+    "/Samples",
+    "/Samples.meta",
     "/Editor",
     "/Editor.meta",
     "/link.xml",
     "/link.xml.meta"
+  ],
+  "samples": [
+    {
+      "displayName": "Login Prefab With Working Implementation",
+      "description": "Contains ready to use login prefab with working auth implementation.",
+      "path": "Samples~/LoginExample"
+    }
   ],
   "dependencies": {
     "io.getready.rgn.core": "0.1.0"
