@@ -61,8 +61,9 @@ namespace RGN.Impl.Firebase
             Auth = new Core.Auth.Auth(FirebaseAuth.GetAuth(app));
             ReadyMasterAuth = new Core.Auth.Auth(FirebaseAuth.GetAuth(readyMasterApp));
 
-            Fn = new Core.Functions.Functions(FirebaseFunctions.GetInstance(app));
-            ReadyMasterFunction = new Core.Functions.Functions(FirebaseFunctions.GetInstance(readyMasterApp));
+            Json = new Serialization.Json();
+            Fn = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
+            ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
 
             ReadyMasterFirestore = new Core.DocumentDB(FirebaseFirestore.GetInstance(readyMasterApp));
             ReadyMasterRealtimeDatabase = new Core.RealTimeDB.RealTimeDB(FirebaseDatabase.GetInstance(readyMasterApp));
@@ -72,7 +73,6 @@ namespace RGN.Impl.Firebase
             DynamicLinks = new Core.DynamicLinks.DynamicLinks();
             Messaging = new Core.Messaging.Messaging();
 
-            Json = new Serialization.Json();
             EngineApp = new Engine.EngineApp();
             Time = new Engine.Time();
             Logger = new Engine.Logger();
