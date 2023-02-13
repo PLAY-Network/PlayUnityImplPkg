@@ -73,11 +73,9 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                     throw new HttpRequestException(message);
                 }
                 var strJson = await response.Content.ReadAsStringAsync();
-                UnityEngine.Debug.Log(strJson);
                 try
                 {
                     var dict = mJson.FromJson<Dictionary<object, Dictionary<object, object>>>(strJson);
-                    UnityEngine.Debug.Log(dict["result"]);
                     return new HttpsCallableResult(dict["result"]);
                 }
                 catch (Newtonsoft.Json.JsonSerializationException)
