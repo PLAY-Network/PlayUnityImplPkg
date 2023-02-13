@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,11 +31,19 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         {
             return CallInternalAsync(null);
         }
-
         Task<IHttpsCallableResult> IHttpsCallableReference.CallAsync(object data)
         {
             return CallInternalAsync(data);
         }
+        Task<TResult> IHttpsCallableReference.CallAsync<TPayload, TResult>()
+        {
+            return CallInternalAsync<TPayload, TResult>(default);
+        }
+        Task<TResult> IHttpsCallableReference.CallAsync<TPayload, TResult>(TPayload payload)
+        {
+            return CallInternalAsync<TPayload, TResult>(payload);
+        }
+
         private async Task<IHttpsCallableResult> CallInternalAsync(object data)
         {
             var request = new HttpRequestMessage(
@@ -47,10 +56,53 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 Encoding.UTF8,
                 "application/json");
 
-            Stopwatch sw = Stopwatch.StartNew();
             if (mReadyMasterAuth.CurrentUser != null)
             {
+                Stopwatch sw = Stopwatch.StartNew();
                 string token = await mReadyMasterAuth.CurrentUser.TokenAsync(false);
+                UnityEngine.Debug.Log("Got User Token in " + sw.ElapsedMilliseconds);
+                request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + token);
+            }
+            using (var response = await mHttpClient.SendAsync(
+                request,
+                HttpCompletionOption.ResponseHeadersRead))
+            {
+                if (!response.IsSuccessStatusCode)
+                {
+                    string message = await response.Content.ReadAsStringAsync();
+                    throw new HttpRequestException(message);
+                }
+                var strJson = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var dict = mJson.FromJson<Dictionary<object, Dictionary<object, object>>>(strJson);
+                    return new HttpsCallableResult(dict["result"]);
+                }
+                catch (Newtonsoft.Json.JsonSerializationException)
+                {
+                    var dict = mJson.FromJson<Dictionary<object, string>>(strJson);
+                    return new HttpsCallableResult(dict["result"]);
+                }
+            }
+        }
+
+        private async Task<TResult> CallInternalAsync<TPayload, TResult>(TPayload payload)
+        {
+            var request = new HttpRequestMessage(
+                    HttpMethod.Post,
+                    mCallAddress /*"http://127.0.0.1:5001/readysandbox/us-central1/virtualItemsV2-getByAppId"*/);
+            string jsonContent = payload == null ? "" : mJson.ToJson(payload);
+            string body = $"{{\"data\": {jsonContent} }}";
+            request.Content = new StringContent(
+                body,
+                Encoding.UTF8,
+                "application/json");
+
+            if (mReadyMasterAuth.CurrentUser != null)
+            {
+                Stopwatch sw = Stopwatch.StartNew();
+                string token = await mReadyMasterAuth.CurrentUser.TokenAsync(false);
+                UnityEngine.Debug.Log("Got User Token in " + sw.ElapsedMilliseconds);
                 request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + token);
             }
             using (var response = await mHttpClient.SendAsync(
@@ -63,8 +115,9 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                     throw new HttpRequestException(message);
                 }
                 var stream = await response.Content.ReadAsStreamAsync();
-                var dict = mJson.FromJson<Dictionary<object, Dictionary<object, object>>>(stream);
-                return new HttpsCallableResult(dict["result"]);
+                var dict = mJson.FromJson<Dictionary<object, TResult>>(stream);
+                var result = dict["result"];
+                return result;
             }
         }
     }

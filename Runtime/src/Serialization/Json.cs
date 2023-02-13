@@ -11,12 +11,12 @@ namespace RGN.Impl.Firebase.Serialization
 
         T IJson.FromJson<T>(string json)
         {
-            return JsonUtility.FromJson<T>(json);
+            return JsonConvert.DeserializeObject<T>(json);
         }
 
         object IJson.FromJson(string json, System.Type type)
         {
-            return JsonUtility.FromJson(json, type);
+            return JsonConvert.DeserializeObject(json, type);
         }
 
         void IJson.FromJsonOverwrite(string json, object objectToOverwrite)

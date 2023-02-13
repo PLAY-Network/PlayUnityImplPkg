@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Core.Functions;
+using RGN.Dependencies.Core.Functions;
 using System;
 using System.Threading.Tasks;
 using FirebaseHttpsCallableReference = Firebase.Functions.HttpsCallableReference;
@@ -25,5 +25,7 @@ namespace RGN.Impl.Firebase.Core.Functions
             var result = await firebaseHttpsCallableReference.CallAsync(data);
             return new HttpsCallableResult(result);
         }
+        Task<TResult> IHttpsCallableReference.CallAsync<TPayload, TResult>() => throw new NotImplementedException();
+        Task<TResult> IHttpsCallableReference.CallAsync<TPayload, TResult>(TPayload payload) => throw new NotImplementedException();
     }
 }
