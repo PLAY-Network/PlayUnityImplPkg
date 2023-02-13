@@ -7,21 +7,26 @@ namespace RGN.Impl.Firebase.Serialization
 {
     public sealed class Json : IJson
     {
-        private readonly JsonSerializer mSerializer = new JsonSerializer();
+        private readonly JsonSerializerSettings mSerializerSettings = new JsonSerializerSettings()
+        {
+            ConstructorHandling = ConstructorHandling.AllowNonPublicDefaultConstructor,
+            NullValueHandling = NullValueHandling.Ignore,
+        };
+        private readonly JsonSerializer mSerializer;
+
+        public Json()
+        {
+            mSerializer = JsonSerializer.Create(mSerializerSettings);
+        }
 
         T IJson.FromJson<T>(string json)
         {
-            return JsonConvert.DeserializeObject<T>(json);
+            return JsonConvert.DeserializeObject<T>(json, mSerializerSettings);
         }
 
         object IJson.FromJson(string json, System.Type type)
         {
-            return JsonConvert.DeserializeObject(json, type);
-        }
-
-        void IJson.FromJsonOverwrite(string json, object objectToOverwrite)
-        {
-            JsonUtility.FromJsonOverwrite(json, objectToOverwrite);
+            return JsonConvert.DeserializeObject(json, type, mSerializerSettings);
         }
 
         string IJson.ToJson(object obj)
