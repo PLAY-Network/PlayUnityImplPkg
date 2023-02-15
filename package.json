@@ -41,6 +41,7 @@
     }
   ],
   "dependencies": {
-    "io.getready.rgn.core": "0.1.0"
+    "io.getready.rgn.core": "0.1.0",
+    "io.getready.rgn.signin.email": "0.1.0"
   }
 }

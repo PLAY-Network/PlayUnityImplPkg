@@ -14,6 +14,11 @@ namespace RGN.Impl.Firebase
             {
                 return;
             }
+
+#if UNITY_STANDALONE_WIN
+            EmailSignInModule.InitializeWindowsDeepLink();   
+#endif
+
             RGNCoreBuilder.CreateInstance(new Dependencies());
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
             await RGNCoreBuilder.BuildAsync();
