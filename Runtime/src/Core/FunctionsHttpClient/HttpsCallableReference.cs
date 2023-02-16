@@ -90,7 +90,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             var request = new HttpRequestMessage(
                     HttpMethod.Post,
                     mCallAddress /*"http://127.0.0.1:5001/readysandbox/us-central1/virtualItemsV2-getByAppId"*/);
-            string jsonContent = payload == null ? "" : mJson.ToJson(payload);
+            string jsonContent = payload == null ? "{}" : mJson.ToJson(payload);
             string body = $"{{\"data\": {jsonContent} }}";
             request.Content = new StringContent(
                 body,
