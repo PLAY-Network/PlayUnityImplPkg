@@ -46,10 +46,11 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 
         private async Task<IHttpsCallableResult> CallInternalAsync(object data)
         {
+            UnityEngine.Debug.Log(mCallAddress);
             var request = new HttpRequestMessage(
                     HttpMethod.Post,
                     mCallAddress /*"http://127.0.0.1:5001/readysandbox/us-central1/virtualItemsV2-getByAppId"*/);
-            string jsonContent = data == null ? "" : mJson.ToJson(data);
+            string jsonContent = data == null ? "{}" : mJson.ToJson(data);
             string body = $"{{\"data\": {jsonContent} }}";
             request.Content = new StringContent(
                 body,
@@ -61,6 +62,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 Stopwatch sw = Stopwatch.StartNew();
                 string token = await mReadyMasterAuth.CurrentUser.TokenAsync(false);
                 UnityEngine.Debug.Log("Got User Token in " + sw.ElapsedMilliseconds);
+                UnityEngine.Debug.Log(token);
                 request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + token);
             }
             using (var response = await mHttpClient.SendAsync(
@@ -70,7 +72,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 if (!response.IsSuccessStatusCode)
                 {
                     string message = await response.Content.ReadAsStringAsync();
-                    throw new HttpRequestException(message);
+                    throw new HttpRequestException(mCallAddress.ToString() + ", error: " + message);
                 }
                 var strJson = await response.Content.ReadAsStringAsync();
                 try
@@ -112,7 +114,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 if (!response.IsSuccessStatusCode)
                 {
                     string message = await response.Content.ReadAsStringAsync();
-                    throw new HttpRequestException(message);
+                    throw new HttpRequestException(mCallAddress.ToString() + ", error: " + message);
                 }
                 var stream = await response.Content.ReadAsStreamAsync();
                 var dict = mJson.FromJson<Dictionary<object, TResult>>(stream);
