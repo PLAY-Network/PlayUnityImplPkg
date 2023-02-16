@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Firebase.Auth;
 using RGN.Dependencies.Core.Auth;
 using RGN.Dependencies.Core.Functions;
 using RGN.Dependencies.Serialization;
@@ -62,7 +60,6 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 Stopwatch sw = Stopwatch.StartNew();
                 string token = await mReadyMasterAuth.CurrentUser.TokenAsync(false);
                 UnityEngine.Debug.Log("Got User Token in " + sw.ElapsedMilliseconds);
-                UnityEngine.Debug.Log(token);
                 request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + token);
             }
             using (var response = await mHttpClient.SendAsync(
