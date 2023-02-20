@@ -15,14 +15,24 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         private readonly HttpClient mHttpClient;
         private readonly IJson mJson;
         private readonly IAuth mReadyMasterAuth;
+        private readonly string mRngMasterProjectId;
+        private readonly string mFunctionName;
         private readonly Uri mCallAddress;
 
-        internal HttpsCallableReference(HttpClient httpClient, IJson json, IAuth readyMasterAuth, Uri callAddress)
+        internal HttpsCallableReference(
+            HttpClient httpClient,
+            IJson json,
+            IAuth readyMasterAuth,
+            string rngMasterProjectId,
+            string baseAddress,
+            string functionName)
         {
             mHttpClient = httpClient;
             mJson = json;
             mReadyMasterAuth = readyMasterAuth;
-            mCallAddress = callAddress;
+            mRngMasterProjectId = rngMasterProjectId;
+            mFunctionName = functionName;
+            mCallAddress = new Uri(new Uri(baseAddress), functionName);
         }
 
         Task<IHttpsCallableResult> IHttpsCallableReference.CallAsync()
@@ -69,7 +79,8 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 if (!response.IsSuccessStatusCode)
                 {
                     string message = await response.Content.ReadAsStringAsync();
-                    throw new HttpRequestException(mCallAddress.ToString() + ", error: " + message);
+                    string errorMessage = GetErrorMessage(message);
+                    throw new HttpRequestException(errorMessage);
                 }
                 var strJson = await response.Content.ReadAsStringAsync();
                 try
@@ -111,13 +122,27 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 if (!response.IsSuccessStatusCode)
                 {
                     string message = await response.Content.ReadAsStringAsync();
-                    throw new HttpRequestException(mCallAddress.ToString() + ", error: " + message);
+                    string errorMessage = GetErrorMessage(message);
+                    throw new HttpRequestException(errorMessage);
                 }
                 var stream = await response.Content.ReadAsStreamAsync();
                 var dict = mJson.FromJson<Dictionary<object, TResult>>(stream);
                 var result = dict["result"];
                 return result;
             }
+        }
+
+        private string GetErrorMessage(string message)
+        {
+#if READY_DEVELOPMENT
+            string urlToFunctionLog =
+                        @$"https://console.cloud.google.com/logs/query;query=resource.type%3D%22
+cloud_function%22%20resource.labels.function_name%3D%22{mFunctionName}%22?project={mRngMasterProjectId}&authuser=0&hl=en";
+            string errorMessage = mFunctionName + ": " + message + ", url: " + urlToFunctionLog;
+            return errorMessage;
+#else
+            return mFunctionName + ": " + message;
+#endif
         }
     }
 }

@@ -25,8 +25,13 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         IHttpsCallableReference IFunctions.GetHttpsCallable(string name)
         {
             HttpClient newClient = HttpClientFactory.Get();
-            System.Uri callAddress = new System.Uri(new System.Uri(_baseCloudAddress), name);
-            return new HttpsCallableReference(newClient, mJson, mReadyMasterAuth, callAddress);
+            return new HttpsCallableReference(
+                newClient,
+                mJson,
+                mReadyMasterAuth,
+                mRngMasterProjectId,
+                _baseCloudAddress,
+                name);
         }
         void IFunctions.UseFunctionsEmulator(string hostAndPort)
         {
