@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase.Analytics;
-using Firebase.Crashlytics;
 using RGN.Dependencies.Core;
 
 namespace RGN.Impl.Firebase.Core
@@ -152,7 +151,6 @@ namespace RGN.Impl.Firebase.Core
                 return;
             }
             FirebaseAnalytics.SetUserId(userId);
-            Crashlytics.SetUserId(userId);
         }
         public void TutorialBegin()
         {
