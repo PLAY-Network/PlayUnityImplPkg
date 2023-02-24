@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using RGN.Modules.SignIn;
 using UnityEngine;
 
@@ -5,11 +6,19 @@ namespace RGN.Impl.Firebase
 {
     public class RGNUnityInitializer : MonoBehaviour
     {
-        [SerializeField] private IInitializable[] _initializables;
         [SerializeField] private bool _autoGuestLogin = true;
 
         private bool _initialized = false;
         private async void Awake()
+        {
+            await InitializeAsync();
+        }
+        private void OnDestroy()
+        {
+            Dispose(true);
+        }
+
+        protected virtual async Task InitializeAsync()
         {
             if (_initialized)
             {
@@ -23,18 +32,10 @@ namespace RGN.Impl.Firebase
             RGNCoreBuilder.CreateInstance(new Dependencies());
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
             await RGNCoreBuilder.BuildAsync();
-            for (int i = 0; i < _initializables.Length; ++i)
-            {
-                await _initializables[i].InitAsync();
-            }
             _initialized = true;
         }
-        private void OnDestroy()
+        protected virtual void Dispose(bool disposing)
         {
-            for (int i =0; i < _initializables.Length; ++i)
-            {
-                _initializables[i].Dispose();
-            }
             RGNCoreBuilder.Dispose();
         }
 
