@@ -6,9 +6,10 @@ namespace RGN.Impl.Firebase
 {
     public interface IRGNFrame
     {
-        void OpenScreen<TScreen>();
-        void CloseScreen<TScreen>();
-        void CloseScreen(System.Type type);
+        void OpenScreen<TScreen>(bool animate = true);
+        void CloseScreen<TScreen>(bool animate = true);
+        void CloseScreen(System.Type type, bool animate = true);
+        void CloseTopScreen();
     }
 
     public class RGNFrame : RGNUnityInitializer, IRGNFrame
@@ -20,6 +21,7 @@ namespace RGN.Impl.Firebase
         private readonly Stack<IUIScreen> mScreensStack = new Stack<IUIScreen>();
 
         private IUIScreen _currentVisibleScreen;
+        private ScreenAnimation? _screenAnimation;
 
         protected override async Task InitializeAsync()
         {
@@ -31,19 +33,19 @@ namespace RGN.Impl.Firebase
                 var screen = _initializables[i];
                 if (i == 0)
                 {
-                    screen.SetVisible(true);
+                    screen.SetVisible(true, false);
                     _currentVisibleScreen = screen;
                 }
                 else
                 {
-                    screen.SetVisible(false);
+                    screen.SetVisible(false, false);
                 }
+                mRegisteredScreens.Add(screen.GetType(), screen);
             }
             for (int i = 0; i < _initializables.Length; ++i)
             {
                 var screen = _initializables[i];
                 await screen.InitAsync(this);
-                mRegisteredScreens.Add(screen.GetType(), screen);
             }
         }
         protected override void Dispose(bool disposing)
@@ -59,45 +61,58 @@ namespace RGN.Impl.Firebase
         {
             if (Input.GetKeyUp(KeyCode.Escape) && _currentVisibleScreen != null)
             {
-                CloseScreen(_currentVisibleScreen.GetType());
+                CloseTopScreen();
+            }
+            if (_screenAnimation.HasValue && !_screenAnimation.Value.IsDone)
+            {
+                _screenAnimation.Value.Tick();
+            }
+            if (_screenAnimation.HasValue && _screenAnimation.Value.IsDone)
+            {
+                _screenAnimation = null;
             }
         }
 
-        public void OpenScreen<TScreen>()
+        public void OpenScreen<TScreen>(bool animate = true)
         {
             var screenTypeToOpen = typeof(TScreen);
             if (mRegisteredScreens.TryGetValue(screenTypeToOpen, out var screen))
             {
-                if (_currentVisibleScreen != null)
-                {
-                    mScreensStack.Push(_currentVisibleScreen);
-                    _currentVisibleScreen.SetVisible(false);
-                }
-                screen.SetVisible(true);
+                _screenAnimation = new ScreenAnimation(_currentVisibleScreen, screen, true);
+                mScreensStack.Push(_currentVisibleScreen);
                 _currentVisibleScreen = screen;
                 return;
             }
             Debug.LogError("Can not find screen to open: " + screenTypeToOpen);
         }
-        public void CloseScreen<TScreen>()
+        public void CloseScreen<TScreen>(bool animate = true)
         {
             var screenTypeToClose = typeof(TScreen);
             CloseScreen(screenTypeToClose);
         }
-        public void CloseScreen(System.Type screenTypeToClose)
+        public void CloseScreen(System.Type screenTypeToClose, bool animate = true)
         {
             if (mRegisteredScreens.TryGetValue(screenTypeToClose, out var screen))
             {
-                screen.SetVisible(false);
                 _currentVisibleScreen = null;
                 if (mScreensStack.Count > 0)
                 {
                     _currentVisibleScreen = mScreensStack.Pop();
-                    _currentVisibleScreen.SetVisible(true);
+                    _screenAnimation = new ScreenAnimation(screen, _currentVisibleScreen, false);
+                    _currentVisibleScreen.SetVisible(true, mScreensStack.Count > 0);
                 }
                 return;
             }
             Debug.LogError("Can not find screen to close: " + screenTypeToClose);
+        }
+        public void CloseTopScreen()
+        {
+            if (_currentVisibleScreen == null)
+            {
+                Debug.LogError("There is no current opened screen, nothing to close");
+                return;
+            }
+            CloseScreen(_currentVisibleScreen.GetType(), true);
         }
     }
 }
