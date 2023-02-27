@@ -5,17 +5,22 @@ using UnityEngine.UI;
 
 namespace RGN.Samples
 {
-    public class UIRoot : IUIScreen
+    public class UIRoot : IUIScreen, IUserProfileClient
     {
         [SerializeField] private Button _exploreButton;
         [SerializeField] private Button _settingsButton;
 
-        public override Task InitAsync(IRGNFrame rgnFrame)
+        public override void PreInit(IRGNFrame rgnFrame)
         {
-            base.InitAsync(rgnFrame);
+            base.PreInit(rgnFrame);
             _exploreButton.onClick.AddListener(OnExploreButtonClick);
             _settingsButton.onClick.AddListener(OnSettingsButtonClick);
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
+        }
+        public override Task InitAsync()
+        {
+            base.InitAsync();
+            _rgnFrame.GetScreen<UserProfileExample>().SetUserProfileClient(this);
             return Task.CompletedTask;
         }
         protected override void Dispose(bool disposing)
@@ -33,7 +38,7 @@ namespace RGN.Samples
         {
             if (RGNCore.I.AuthorizedProviders == EnumAuthProvider.Email)
             {
-                _rgnFrame.OpenScreen<WalletsExample>();
+                _rgnFrame.OpenScreen<UserProfileExample>();
             }
             else
             {
@@ -43,6 +48,16 @@ namespace RGN.Samples
         private void OnSettingsButtonClick()
         {
             _rgnFrame.OpenScreen<SettingsScreen>();
+        }
+
+        Task<string> IUserProfileClient.GetPrimaryWalletAddressAsync()
+        {
+            return _rgnFrame.GetScreen<WalletsExample>().GetPrimaryWalletAddressAsync();
+        }
+        Task IUserProfileClient.OpenWalletsScreenAsync()
+        {
+            _rgnFrame.OpenScreen<WalletsExample>();
+            return Task.CompletedTask;
         }
     }
 }

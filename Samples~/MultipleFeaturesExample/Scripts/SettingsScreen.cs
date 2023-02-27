@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using RGN.Impl.Firebase;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,11 +8,10 @@ namespace RGN.Samples
     {
         [SerializeField] private Button _openSignInScreenButton;
 
-        public override Task InitAsync(IRGNFrame rgnFrame)
+        public override void PreInit(IRGNFrame rgnFrame)
         {
-            base.InitAsync(rgnFrame);
+            base.PreInit(rgnFrame);
             _openSignInScreenButton.onClick.AddListener(OnOpenSignInScreenButtonClick);
-            return Task.CompletedTask;
         }
         protected override void Dispose(bool disposing)
         {

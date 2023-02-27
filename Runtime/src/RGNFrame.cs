@@ -6,6 +6,7 @@ namespace RGN.Impl.Firebase
 {
     public interface IRGNFrame
     {
+        TScreen GetScreen<TScreen>() where TScreen : class;
         void OpenScreen<TScreen>(bool animate = true);
         void CloseScreen<TScreen>(bool animate = true);
         void CloseScreen(System.Type type, bool animate = true);
@@ -31,6 +32,7 @@ namespace RGN.Impl.Firebase
             for (int i = 0; i < _initializables.Length; ++i)
             {
                 var screen = _initializables[i];
+                screen.PreInit(this);
                 if (i == 0)
                 {
                     screen.SetVisible(true, false);
@@ -45,7 +47,7 @@ namespace RGN.Impl.Firebase
             for (int i = 0; i < _initializables.Length; ++i)
             {
                 var screen = _initializables[i];
-                await screen.InitAsync(this);
+                await screen.InitAsync();
             }
         }
         protected override void Dispose(bool disposing)
@@ -73,6 +75,17 @@ namespace RGN.Impl.Firebase
             }
         }
 
+        public TScreen GetScreen<TScreen>()
+            where TScreen : class
+        {
+            var screenTypeToOpen = typeof(TScreen);
+            if (mRegisteredScreens.TryGetValue(screenTypeToOpen, out var screen))
+            {
+                return screen as TScreen;
+            }
+            Debug.LogError("Can not find screen to open: " + screenTypeToOpen);
+            return null;
+        }
         public void OpenScreen<TScreen>(bool animate = true)
         {
             var screenTypeToOpen = typeof(TScreen);

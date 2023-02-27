@@ -36,9 +36,9 @@
   ],
   "samples": [
     {
-      "displayName": "Login Prefab With Working Implementation",
-      "description": "Contains ready to use login prefab with working auth implementation.",
-      "path": "Samples~/LoginExample"
+      "displayName": "Multiple Features Example",
+      "description": "Contains ready to use scene and prefabs to demonstrate how to use multiple features of the SDK.",
+      "path": "Samples~/MultipleFeaturesExample"
     }
   ],
   "dependencies": {

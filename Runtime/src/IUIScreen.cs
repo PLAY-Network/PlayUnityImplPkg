@@ -12,7 +12,7 @@ namespace RGN.Impl.Firebase
 
         protected IRGNFrame _rgnFrame;
 
-        public virtual Task InitAsync(IRGNFrame rgnFrame)
+        public virtual void PreInit(IRGNFrame rgnFrame)
         {
             RectTransform = GetComponent<RectTransform>();
             _rgnFrame = rgnFrame;
@@ -21,6 +21,9 @@ namespace RGN.Impl.Firebase
                 _backButton.gameObject.SetActive(false);
                 _backButton.onClick.AddListener(OnBackButtonClick);
             }
+        }
+        public virtual Task InitAsync()
+        {
             return Task.CompletedTask;
         }
         protected virtual void Dispose(bool disposing)
