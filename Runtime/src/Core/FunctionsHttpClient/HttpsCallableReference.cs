@@ -67,9 +67,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 
             if (mReadyMasterAuth.CurrentUser != null)
             {
-                Stopwatch sw = Stopwatch.StartNew();
                 string token = await mReadyMasterAuth.CurrentUser.TokenAsync(false);
-                UnityEngine.Debug.Log("Got User Token in " + sw.ElapsedMilliseconds);
                 request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + token);
             }
             using (var response = await mHttpClient.SendAsync(
@@ -110,9 +108,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 
             if (mReadyMasterAuth.CurrentUser != null)
             {
-                Stopwatch sw = Stopwatch.StartNew();
                 string token = await mReadyMasterAuth.CurrentUser.TokenAsync(false);
-                UnityEngine.Debug.Log("Got User Token in " + sw.ElapsedMilliseconds);
                 request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + token);
             }
             using (var response = await mHttpClient.SendAsync(

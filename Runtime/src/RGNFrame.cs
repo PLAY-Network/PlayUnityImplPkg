@@ -83,7 +83,7 @@ namespace RGN.Impl.Firebase
             {
                 return screen as TScreen;
             }
-            Debug.LogError("Can not find screen to open: " + screenTypeToOpen);
+            Debug.LogError("Can not find screen: " + screenTypeToOpen);
             return null;
         }
         public void OpenScreen<TScreen>(bool animate = true)
