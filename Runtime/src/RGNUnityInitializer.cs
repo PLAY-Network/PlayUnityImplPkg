@@ -7,10 +7,15 @@ namespace RGN.Impl.Firebase
     public class RGNUnityInitializer : MonoBehaviour
     {
         [SerializeField] private bool _autoGuestLogin = true;
+        [SerializeField] private bool _dontDestroyOnLoadNewScene = true;
 
         private bool _initialized = false;
         private async void Awake()
         {
+            if (_dontDestroyOnLoadNewScene)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
             await InitializeAsync();
         }
         private void OnDestroy()
