@@ -36,7 +36,7 @@
   ],
   "samples": [
     {
-      "displayName": "Multiple Features Example. Warning: You need to import the samples from Email, UserProfile and Wallets packages.",
+      "displayName": "Multiple Features Example",
       "description": "Contains ready to use scene and prefabs to demonstrate how to use multiple features of the SDK.",
       "path": "Samples~/MultipleFeaturesExample"
     }
