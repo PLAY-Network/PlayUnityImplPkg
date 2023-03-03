@@ -1,8 +1,9 @@
-﻿using RGN.Dependencies.Core.Storage;
+using RGN.Dependencies.Core.Storage;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FirebaseStorageReference = Firebase.Storage.StorageReference;
+using FirebaseStorageException = Firebase.Storage.StorageException;
 using FirebaseMetadataChange = Firebase.Storage.MetadataChange;
 using FirebaseStorageMetadata = Firebase.Storage.StorageMetadata;
 
@@ -17,18 +18,32 @@ namespace RGN.Impl.Firebase.Core.Storage
             this.firebaseStorageReference = firebaseStorageReference;
         }
 
-        Task<byte[]> IStorageReference.GetBytesAsync(long maxDownloadSizeBytes)
+        async Task<byte[]> IStorageReference.GetBytesAsync(long maxDownloadSizeBytes)
         {
-            return firebaseStorageReference.GetBytesAsync(maxDownloadSizeBytes);
+            try
+            {
+                return await firebaseStorageReference.GetBytesAsync(maxDownloadSizeBytes);
+            }
+            catch (FirebaseStorageException ex)
+            {
+                throw new StorageException(ex.Message, ex);
+            }
         }
 
-        Task<byte[]> IStorageReference.GetBytesAsync(
+        async Task<byte[]> IStorageReference.GetBytesAsync(
             long maxDownloadSizeBytes,
             IProgress<IDownloadState> progressHandler,
             CancellationToken cancelToken)
         {
             var firebaseProgressHandler = new DownloadProgressHandler(progressHandler, this);
-            return firebaseStorageReference.GetBytesAsync(maxDownloadSizeBytes, firebaseProgressHandler, cancelToken);
+            try
+            {
+                return await firebaseStorageReference.GetBytesAsync(maxDownloadSizeBytes, firebaseProgressHandler, cancelToken);
+            }
+            catch (FirebaseStorageException ex)
+            {
+                throw new StorageException(ex.Message, ex);
+            }
         }
 
         async Task<IStorageMetadata> IStorageReference.PutBytesAsync(
