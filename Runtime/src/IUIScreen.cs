@@ -46,7 +46,17 @@ namespace RGN.Impl.Firebase
                 _backButton.gameObject.SetActive(showBackButton);
             }
             gameObject.SetActive(visible);
+            if (visible)
+            {
+                OnShow();
+            }
+            else
+            {
+                OnHide();
+            }
         }
+        protected virtual void OnShow() { }
+        protected virtual void OnHide() { }
         protected void OnBackButtonClick()
         {
             _rgnFrame.CloseTopScreen();
