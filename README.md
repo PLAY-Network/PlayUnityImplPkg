@@ -1,2 +1,2 @@
-# RGN Firebase Implementation# RGN ImplFirebase
-version: 0.1.0-dev.105
+# RGN ImplFirebase
+version: 0.1.0-dev.106
