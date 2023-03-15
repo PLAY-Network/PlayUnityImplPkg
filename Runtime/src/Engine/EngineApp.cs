@@ -36,12 +36,5 @@ namespace RGN.Impl.Firebase.Engine
             var asComponent = rgnUpdater as RGNUnityUpdater;
             Object.Destroy(asComponent?.gameObject);
         }
-
-        ITexture2D IEngineApp.CreateTexture2D(int width, int height)
-        {
-            UnityEngine.Texture2D texture2D = new UnityEngine.Texture2D(200, 200);
-            ITexture2D texture = new Texture2D(texture2D);
-            return texture;
-        }
     }
 }
