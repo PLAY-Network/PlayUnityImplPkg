@@ -1,4 +1,6 @@
+using System;
 using System.Threading.Tasks;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -33,11 +35,11 @@ namespace RGN.Impl.Firebase
                 _backButton.onClick.RemoveListener(OnBackButtonClick);
             }
         }
-
         public void Dispose()
         {
             Dispose(disposing: true);
         }
+        public virtual void OnWillAppearNow(object parameters) { }
 
         internal void SetVisible(bool visible, bool showBackButton)
         {

@@ -23,7 +23,6 @@ namespace RGN.Impl.Firebase
                 0,
                 0);
 
-            inScreen.SetVisible(true, true);
             IsDone = false;
         }
 

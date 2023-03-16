@@ -8,6 +8,7 @@ namespace RGN.Impl.Firebase
     {
         TScreen GetScreen<TScreen>() where TScreen : class;
         void OpenScreen<TScreen>(bool animate = true);
+        void OpenScreen<TScreen>(object parameters, bool animate = true);
         void CloseScreen<TScreen>(bool animate = true);
         void CloseScreen(System.Type type, bool animate = true);
         void CloseTopScreen();
@@ -92,11 +93,17 @@ namespace RGN.Impl.Firebase
             if (mRegisteredScreens.TryGetValue(screenTypeToOpen, out var screen))
             {
                 _screenAnimation = new ScreenAnimation(_currentVisibleScreen, screen, true);
+                screen.SetVisible(true, true);
                 mScreensStack.Push(_currentVisibleScreen);
                 _currentVisibleScreen = screen;
                 return;
             }
             Debug.LogError("Can not find screen to open: " + screenTypeToOpen);
+        }
+        public void OpenScreen<TScreen>(object parameters, bool animate = true)
+        {
+            OpenScreen<TScreen>(animate);
+            _currentVisibleScreen.OnWillAppearNow(parameters);
         }
         public void CloseScreen<TScreen>(bool animate = true)
         {
