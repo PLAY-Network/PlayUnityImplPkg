@@ -7,14 +7,21 @@ namespace RGN.Samples
 {
     public class UIRoot : IUIScreen, IUserProfileClient
     {
-        [SerializeField] private Button _exploreButton;
+        [SerializeField] private CanvasGroup _canvasGroup;
+        [SerializeField] private Button _loginButton;
+        [SerializeField] private Button _exploreUserProfileButton;
+        [SerializeField] private Button _exploreVirtualItemsButton;
         [SerializeField] private Button _settingsButton;
 
         public override void PreInit(IRGNFrame rgnFrame)
         {
             base.PreInit(rgnFrame);
-            _exploreButton.onClick.AddListener(OnExploreButtonClick);
+            _loginButton.onClick.AddListener(OnLoginButtonClick);
+            _exploreUserProfileButton.onClick.AddListener(OnExploreUserProfileButtonClick);
+            _exploreVirtualItemsButton.onClick.AddListener(OnExploreVirtualItemsButtonClick);
             _settingsButton.onClick.AddListener(OnSettingsButtonClick);
+            _canvasGroup.interactable = false;
+            SetUserLoggedIn(false);
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
         }
         public override Task InitAsync()
@@ -26,28 +33,34 @@ namespace RGN.Samples
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
-            _exploreButton.onClick.RemoveListener(OnExploreButtonClick);
+            _loginButton.onClick.RemoveListener(OnLoginButtonClick);
+            _exploreUserProfileButton.onClick.RemoveListener(OnExploreUserProfileButtonClick);
+            _exploreVirtualItemsButton.onClick.RemoveListener(OnExploreVirtualItemsButtonClick);
             _settingsButton.onClick.RemoveListener(OnSettingsButtonClick);
             RGNCore.I.AuthenticationChanged -= OnAuthenticationChanged;
         }
 
         private void OnAuthenticationChanged(EnumLoginState state, EnumLoginError error)
         {
+            SetUserLoggedIn(state == EnumLoginState.Success &&
+                RGNCore.I.AuthorizedProviders == EnumAuthProvider.Email);
+            _canvasGroup.interactable = true;
         }
-        private void OnExploreButtonClick()
+        private void OnLoginButtonClick()
         {
-            if (RGNCore.I.AuthorizedProviders == EnumAuthProvider.Email)
-            {
-                _rgnFrame.OpenScreen<UserProfileExample>();
-            }
-            else
-            {
-                _rgnFrame.OpenScreen<SignInUpExample>();
-            }
+            _rgnFrame.OpenScreen<SignInUpExample>();
         }
         private void OnSettingsButtonClick()
         {
             _rgnFrame.OpenScreen<SettingsScreen>();
+        }
+        private void OnExploreUserProfileButtonClick()
+        {
+            _rgnFrame.OpenScreen<UserProfileExample>();
+        }
+        private void OnExploreVirtualItemsButtonClick()
+        {
+            _rgnFrame.OpenScreen<VirtualItemsExample>();
         }
 
         Task<string> IUserProfileClient.GetPrimaryWalletAddressAsync()
@@ -58,6 +71,12 @@ namespace RGN.Samples
         {
             _rgnFrame.OpenScreen<WalletsExample>();
             return Task.CompletedTask;
+        }
+        private void SetUserLoggedIn(bool loggedInWithEmail)
+        {
+            _loginButton.gameObject.SetActive(!loggedInWithEmail);
+            _exploreUserProfileButton.gameObject.SetActive(loggedInWithEmail);
+            _exploreVirtualItemsButton.gameObject.SetActive(loggedInWithEmail);
         }
     }
 }
