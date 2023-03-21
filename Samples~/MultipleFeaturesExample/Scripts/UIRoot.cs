@@ -11,6 +11,7 @@ namespace RGN.Samples
         [SerializeField] private Button _loginButton;
         [SerializeField] private Button _exploreUserProfileButton;
         [SerializeField] private Button _exploreVirtualItemsButton;
+        [SerializeField] private Button _exploreCurrenciesButton;
         [SerializeField] private Button _settingsButton;
 
         public override void PreInit(IRGNFrame rgnFrame)
@@ -19,6 +20,7 @@ namespace RGN.Samples
             _loginButton.onClick.AddListener(OnLoginButtonClick);
             _exploreUserProfileButton.onClick.AddListener(OnExploreUserProfileButtonClick);
             _exploreVirtualItemsButton.onClick.AddListener(OnExploreVirtualItemsButtonClick);
+            _exploreCurrenciesButton.onClick.AddListener(OnExploreCurrenciesButtonClick);
             _settingsButton.onClick.AddListener(OnSettingsButtonClick);
             _canvasGroup.interactable = false;
             SetUserLoggedIn(false);
@@ -36,6 +38,7 @@ namespace RGN.Samples
             _loginButton.onClick.RemoveListener(OnLoginButtonClick);
             _exploreUserProfileButton.onClick.RemoveListener(OnExploreUserProfileButtonClick);
             _exploreVirtualItemsButton.onClick.RemoveListener(OnExploreVirtualItemsButtonClick);
+            _exploreCurrenciesButton.onClick.RemoveListener(OnExploreCurrenciesButtonClick);
             _settingsButton.onClick.RemoveListener(OnSettingsButtonClick);
             RGNCore.I.AuthenticationChanged -= OnAuthenticationChanged;
         }
@@ -62,6 +65,10 @@ namespace RGN.Samples
         {
             _rgnFrame.OpenScreen<VirtualItemsExample>();
         }
+        private void OnExploreCurrenciesButtonClick()
+        {
+            _rgnFrame.OpenScreen<CurrencyExample>();
+        }
 
         Task<string> IUserProfileClient.GetPrimaryWalletAddressAsync()
         {
@@ -77,6 +84,7 @@ namespace RGN.Samples
             _loginButton.gameObject.SetActive(!loggedInWithEmail);
             _exploreUserProfileButton.gameObject.SetActive(loggedInWithEmail);
             _exploreVirtualItemsButton.gameObject.SetActive(loggedInWithEmail);
+            _exploreCurrenciesButton.gameObject.SetActive(loggedInWithEmail);
         }
     }
 }
