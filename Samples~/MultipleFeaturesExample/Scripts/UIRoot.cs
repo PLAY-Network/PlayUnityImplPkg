@@ -92,6 +92,14 @@ namespace RGN.Samples
         {
             _rgnFrame.OpenScreen<WalletsExample>();
         }
+        int IVirtualItemsExampleClient.GetCurrentUserRGNCoinBalance()
+        {
+            return _rgnFrame.GetScreen<UserProfileExample>().GetRGNCoinBalance();
+        }
+        void IVirtualItemsExampleClient.OpenCurrenciesScreen()
+        {
+            _rgnFrame.OpenScreen<CurrencyExample>();
+        }
 
         private void SetUserLoggedIn(bool loggedInWithEmail)
         {
