@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using RGN.Impl.Firebase;
+using RGN.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -13,6 +14,8 @@ namespace RGN.Samples
         [SerializeField] private Button _exploreVirtualItemsButton;
         [SerializeField] private Button _exploreCurrenciesButton;
         [SerializeField] private Button _settingsButton;
+        [SerializeField] private LoadingIndicator _fullScreenLoadingIndicator;
+
 
         public override void PreInit(IRGNFrame rgnFrame)
         {
@@ -23,6 +26,7 @@ namespace RGN.Samples
             _exploreCurrenciesButton.onClick.AddListener(OnExploreCurrenciesButtonClick);
             _settingsButton.onClick.AddListener(OnSettingsButtonClick);
             _canvasGroup.interactable = false;
+            _fullScreenLoadingIndicator.SetEnabled(true);
             SetUserLoggedIn(false);
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
         }
@@ -49,6 +53,7 @@ namespace RGN.Samples
             SetUserLoggedIn(state == EnumLoginState.Success &&
                 RGNCore.I.AuthorizedProviders == EnumAuthProvider.Email);
             _canvasGroup.interactable = true;
+            _fullScreenLoadingIndicator.SetEnabled(false);
         }
         private void OnLoginButtonClick()
         {
