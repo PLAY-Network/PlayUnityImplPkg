@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace RGN.Samples
 {
-    public class UIRoot : IUIScreen, IUserProfileClient
+    public class UIRoot : IUIScreen, IUserProfileClient, IVirtualItemsExampleClient
     {
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private Button _loginButton;
@@ -30,6 +30,7 @@ namespace RGN.Samples
         {
             base.InitAsync();
             _rgnFrame.GetScreen<UserProfileExample>().SetUserProfileClient(this);
+            _rgnFrame.GetScreen<VirtualItemsExample>().SetVirtualItemsExampleClient(this);
             return Task.CompletedTask;
         }
         protected override void Dispose(bool disposing)
@@ -74,11 +75,19 @@ namespace RGN.Samples
         {
             return _rgnFrame.GetScreen<WalletsExample>().GetPrimaryWalletAddressAsync();
         }
-        Task IUserProfileClient.OpenWalletsScreenAsync()
+        void IUserProfileClient.OpenWalletsScreen()
         {
             _rgnFrame.OpenScreen<WalletsExample>();
-            return Task.CompletedTask;
         }
+        Task<bool> IVirtualItemsExampleClient.DoesTheUserHasPrimaryWalletAddressAsync()
+        {
+            return _rgnFrame.GetScreen<WalletsExample>().DoesTheUserHasPrimaryWalletAddressAsync();
+        }
+        void IVirtualItemsExampleClient.OpenWalletsScreen()
+        {
+            _rgnFrame.OpenScreen<WalletsExample>();
+        }
+
         private void SetUserLoggedIn(bool loggedInWithEmail)
         {
             _loginButton.gameObject.SetActive(!loggedInWithEmail);
