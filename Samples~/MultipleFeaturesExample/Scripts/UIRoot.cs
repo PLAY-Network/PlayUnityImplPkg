@@ -104,6 +104,10 @@ namespace RGN.Samples
         {
             _rgnFrame.OpenScreen<CurrencyExample>();
         }
+        Task IVirtualItemsExampleClient.UpdateUserProfileAsync()
+        {
+            return _rgnFrame.GetScreen<UserProfileExample>().ReloadUserProfileAsync();
+        }
 
         private void SetUserLoggedIn(bool loggedInWithEmail)
         {
