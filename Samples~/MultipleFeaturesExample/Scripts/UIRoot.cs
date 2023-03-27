@@ -84,6 +84,10 @@ namespace RGN.Samples
         {
             _rgnFrame.OpenScreen<WalletsExample>();
         }
+        void IUserProfileClient.OpenInventoryScreen()
+        {
+            _rgnFrame.OpenScreen<InventoryExample>();
+        }
         Task<bool> IVirtualItemsExampleClient.DoesTheUserHasPrimaryWalletAddressAsync()
         {
             return _rgnFrame.GetScreen<WalletsExample>().DoesTheUserHasPrimaryWalletAddressAsync();
