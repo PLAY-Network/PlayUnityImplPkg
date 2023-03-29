@@ -88,6 +88,14 @@ namespace RGN.Samples
         {
             _rgnFrame.OpenScreen<InventoryExample>();
         }
+        void IUserProfileClient.OpenGameProgressScreen()
+        {
+            _rgnFrame.OpenScreen<GameProgressExample>();
+        }
+        Task<int> IUserProfileClient.GetUserLevelAsync()
+        {
+            return _rgnFrame.GetScreen<GameProgressExample>().GetUserLevelAsync();
+        }
         Task<bool> IVirtualItemsExampleClient.DoesTheUserHasPrimaryWalletAddressAsync()
         {
             return _rgnFrame.GetScreen<WalletsExample>().DoesTheUserHasPrimaryWalletAddressAsync();
