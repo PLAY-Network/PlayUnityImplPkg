@@ -14,7 +14,12 @@ namespace RGN.Impl.Firebase
         {
             if (_dontDestroyOnLoadNewScene)
             {
-                DontDestroyOnLoad(gameObject);
+                DontDestroyOnLoad(gameObject.transform.root.gameObject);
+                if (gameObject.transform.parent != null)
+                {
+                    Debug.LogWarning(
+                        "[RGNUnityInitializer]: The game object will be not destroyed between scenes: " + gameObject.name);
+                }
             }
             await InitializeAsync();
         }
