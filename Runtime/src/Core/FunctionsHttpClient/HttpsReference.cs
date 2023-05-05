@@ -10,7 +10,7 @@ using RGN.Dependencies.Serialization;
 
 namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 {
-    public sealed class HttpsCallableReference : IHttpsCallableReference
+    public sealed class HttpsReference : IHttpsCallableReference
     {
         private readonly HttpClient mHttpClient;
         private readonly IJson mJson;
@@ -18,14 +18,16 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         private readonly string mRngMasterProjectId;
         private readonly string mFunctionName;
         private readonly Uri mCallAddress;
+        private readonly bool mActAsACallable;
 
-        internal HttpsCallableReference(
+        internal HttpsReference(
             HttpClient httpClient,
             IJson json,
             IAuth readyMasterAuth,
             string rngMasterProjectId,
             string baseAddress,
-            string functionName)
+            string functionName,
+            bool actAsACallable)
         {
             mHttpClient = httpClient;
             mJson = json;
@@ -33,13 +35,14 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             mRngMasterProjectId = rngMasterProjectId;
             mFunctionName = functionName;
             mCallAddress = new Uri(new Uri(baseAddress), functionName);
+            mActAsACallable = actAsACallable;
         }
 
-        Task<IHttpsCallableResult> IHttpsCallableReference.CallAsync()
+        Task IHttpsCallableReference.CallAsync()
         {
             return CallInternalAsync(null);
         }
-        Task<IHttpsCallableResult> IHttpsCallableReference.CallAsync(object data)
+        Task IHttpsCallableReference.CallAsync(object data)
         {
             return CallInternalAsync(data);
         }
@@ -52,7 +55,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             return CallInternalAsync<TPayload, TResult>(payload);
         }
 
-        private async Task<IHttpsCallableResult> CallInternalAsync(object data)
+        private async Task CallInternalAsync(object data)
         {
             UnityEngine.Debug.Log(mCallAddress);
             var request = new HttpRequestMessage(
@@ -61,7 +64,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             string jsonContent = data == null ? "{}" : mJson.ToJson(data);
             string body = $"{{\"data\": {jsonContent} }}";
             request.Content = new StringContent(
-                body,
+                mActAsACallable ? body : jsonContent,
                 Encoding.UTF8,
                 "application/json");
 
@@ -80,17 +83,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                     string errorMessage = GetErrorMessage(message);
                     throw new HttpRequestException(errorMessage);
                 }
-                var strJson = await response.Content.ReadAsStringAsync();
-                try
-                {
-                    var dict = mJson.FromJson<Dictionary<object, Dictionary<object, object>>>(strJson);
-                    return new HttpsCallableResult(dict["result"]);
-                }
-                catch (Newtonsoft.Json.JsonSerializationException)
-                {
-                    var dict = mJson.FromJson<Dictionary<object, string>>(strJson);
-                    return new HttpsCallableResult(dict["result"]);
-                }
+                await response.Content.ReadAsStringAsync();
             }
         }
 
@@ -102,7 +95,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             string jsonContent = payload == null ? "{}" : mJson.ToJson(payload);
             string body = $"{{\"data\": {jsonContent} }}";
             request.Content = new StringContent(
-                body,
+                mActAsACallable ? body : jsonContent,
                 Encoding.UTF8,
                 "application/json");
 
@@ -122,9 +115,13 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                     throw new HttpRequestException(errorMessage);
                 }
                 var stream = await response.Content.ReadAsStreamAsync();
-                var dict = mJson.FromJson<Dictionary<object, TResult>>(stream);
-                var result = dict["result"];
-                return result;
+                if (mActAsACallable)
+                {
+                    var dict = mJson.FromJson<Dictionary<object, TResult>>(stream);
+                    var result = dict["result"];
+                    return result;
+                }
+                return mJson.FromJson<TResult>(stream);
             }
         }
 

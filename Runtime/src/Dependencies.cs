@@ -2,7 +2,6 @@ using Firebase;
 using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Firestore;
-using Firebase.Functions;
 using Firebase.Storage;
 using RGN.Dependencies;
 using RGN.Dependencies.Core;
@@ -10,8 +9,6 @@ using RGN.Dependencies.Core.Auth;
 using RGN.Dependencies.Core.DynamicLinks;
 using RGN.Dependencies.Core.Functions;
 using RGN.Dependencies.Core.Messaging;
-using RGN.Dependencies.Core.RealTimeDB;
-using RGN.Dependencies.Core.Storage;
 using RGN.Dependencies.Engine;
 using RGN.Dependencies.Serialization;
 
@@ -27,9 +24,6 @@ namespace RGN.Impl.Firebase
         public IAuth ReadyMasterAuth { get; }
         public IFunctions Fn { get; }
         public IFunctions ReadyMasterFunction { get; }
-        public IStorage ReadyMasterStorage { get; }
-        public IDocumentDB ReadyMasterFirestore { get; }
-        public IRealTimeDB ReadyMasterRealtimeDatabase { get; }
         public IDynamicLinks DynamicLinks { get; }
         public IMessaging Messaging { get; }
         public IJson Json { get; }
@@ -64,11 +58,6 @@ namespace RGN.Impl.Firebase
             Json = new Serialization.Json();
             Fn = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
             ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
-
-            ReadyMasterFirestore = new Core.DocumentDB(FirebaseFirestore.GetInstance(readyMasterApp));
-            ReadyMasterRealtimeDatabase = new Core.RealTimeDB.RealTimeDB(FirebaseDatabase.GetInstance(readyMasterApp));
-
-            ReadyMasterStorage = new Core.Storage.Storage(FirebaseStorage.GetInstance(readyMasterApp, applicationStore.GetRGNStorageURL));
 
             DynamicLinks = new Core.DynamicLinks.DynamicLinks();
             Messaging = new Core.Messaging.Messaging();

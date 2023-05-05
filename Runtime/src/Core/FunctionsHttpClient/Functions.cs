@@ -2,6 +2,7 @@ using System.Net.Http;
 using RGN.Dependencies.Core.Auth;
 using RGN.Dependencies.Core.Functions;
 using RGN.Dependencies.Serialization;
+using RGN.Network;
 
 namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 {
@@ -25,13 +26,26 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         IHttpsCallableReference IFunctions.GetHttpsCallable(string name)
         {
             HttpClient newClient = HttpClientFactory.Get();
-            return new HttpsCallableReference(
+            return new HttpsReference(
                 newClient,
                 mJson,
                 mReadyMasterAuth,
                 mRngMasterProjectId,
                 _baseCloudAddress,
-                name);
+                name,
+                true);
+        }
+        IHttpsCallableReference IFunctions.GetHttpsRequest(string name)
+        {
+            HttpClient newClient = HttpClientFactory.Get();
+            return new HttpsReference(
+                newClient,
+                mJson,
+                mReadyMasterAuth,
+                mRngMasterProjectId,
+                _baseCloudAddress,
+                name,
+                false);
         }
         void IFunctions.UseFunctionsEmulator(string hostAndPort)
         {
