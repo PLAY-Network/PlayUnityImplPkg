@@ -1,8 +1,5 @@
 using Firebase;
 using Firebase.Auth;
-using Firebase.Database;
-using Firebase.Firestore;
-using Firebase.Storage;
 using RGN.Dependencies;
 using RGN.Dependencies.Core;
 using RGN.Dependencies.Core.Auth;
