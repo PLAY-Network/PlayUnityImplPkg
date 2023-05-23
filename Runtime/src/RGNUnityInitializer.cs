@@ -4,33 +4,22 @@ using UnityEngine;
 
 namespace RGN.Impl.Firebase
 {
-    public class RGNUnityInitializer : MonoBehaviour
+    public class RGNUnityInitializer : MonoSingleton<RGNUnityInitializer>
     {
         [SerializeField] private bool _autoGuestLogin = true;
-        [SerializeField] private bool _dontDestroyOnLoadNewScene = true;
 
-        private bool _initialized = false;
-        private async void Awake()
+        protected override async void OnAwakeInternal()
         {
-            if (_dontDestroyOnLoadNewScene)
-            {
-                DontDestroyOnLoad(gameObject.transform.root.gameObject);
-                if (gameObject.transform.parent != null)
-                {
-                    Debug.LogWarning(
-                        "[RGNUnityInitializer]: The game object will be not destroyed between scenes: " + gameObject.name);
-                }
-            }
             await InitializeAsync();
         }
-        private void OnDestroy()
+        protected override void OnDestroyInternal()
         {
             Dispose(true);
         }
 
         protected virtual async Task InitializeAsync()
         {
-            if (_initialized)
+            if (RGNCoreBuilder.Initialized)
             {
                 return;
             }
@@ -42,7 +31,6 @@ namespace RGN.Impl.Firebase
             RGNCoreBuilder.CreateInstance(new Dependencies());
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
             await RGNCoreBuilder.BuildAsync();
-            _initialized = true;
         }
         protected virtual void Dispose(bool disposing)
         {
