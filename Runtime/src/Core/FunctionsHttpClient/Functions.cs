@@ -47,6 +47,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 name,
                 false);
         }
+
         void IFunctions.UseFunctionsEmulator(string hostAndPort)
         {
             _baseCloudAddress = $"http://{hostAndPort}/{mRngMasterProjectId}/{REGION}/";
