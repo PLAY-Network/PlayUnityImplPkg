@@ -66,7 +66,14 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             string jsonContent = EMPTY_JSON;
             if (data != null)
             {
-                jsonContent = mJson.ToJson(data);
+                if (data is string)
+                {
+                    jsonContent = data as string;
+                }
+                else
+                {
+                    jsonContent = mJson.ToJson(data);
+                }
             }
             string content = jsonContent;
             if (mActAsACallable)
@@ -105,7 +112,14 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             string jsonContent = EMPTY_JSON;
             if (payload != null)
             {
-                jsonContent = mJson.ToJson(payload);
+                if (payload is string)
+                {
+                    jsonContent = payload as string;
+                }
+                else
+                {
+                    jsonContent = mJson.ToJson(payload);
+                }
             }
             string content = jsonContent;
             if (mActAsACallable)
