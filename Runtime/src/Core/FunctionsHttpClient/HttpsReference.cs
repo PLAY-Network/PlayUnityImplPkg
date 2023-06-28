@@ -12,6 +12,8 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 {
     public sealed class HttpsReference : IHttpsCallableReference
     {
+        private const string EMPTY_JSON = "{}";
+
         private readonly HttpClient mHttpClient;
         private readonly IJson mJson;
         private readonly IAuth mReadyMasterAuth;
@@ -61,10 +63,18 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             var request = new HttpRequestMessage(
                     HttpMethod.Post,
                     mCallAddress);
-            string jsonContent = data == null ? "{}" : mJson.ToJson(data);
-            string body = $"{{\"data\": {jsonContent} }}";
+            string jsonContent = EMPTY_JSON;
+            if (data != null)
+            {
+                jsonContent = mJson.ToJson(data);
+            }
+            string content = jsonContent;
+            if (mActAsACallable)
+            {
+                content = $"{{\"data\": {jsonContent} }}";
+            }
             request.Content = new StringContent(
-                mActAsACallable ? body : jsonContent,
+                content,
                 Encoding.UTF8,
                 "application/json");
 
@@ -92,10 +102,18 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             var request = new HttpRequestMessage(
                     HttpMethod.Post,
                     mCallAddress);
-            string jsonContent = payload == null ? "{}" : mJson.ToJson(payload);
-            string body = $"{{\"data\": {jsonContent} }}";
+            string jsonContent = EMPTY_JSON;
+            if (payload != null)
+            {
+                jsonContent = mJson.ToJson(payload);
+            }
+            string content = jsonContent;
+            if (mActAsACallable)
+            {
+                content = $"{{\"data\": {jsonContent} }}";
+            }
             request.Content = new StringContent(
-                mActAsACallable ? body : jsonContent,
+                content,
                 Encoding.UTF8,
                 "application/json");
 
@@ -113,6 +131,11 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                     string message = await response.Content.ReadAsStringAsync();
                     string errorMessage = GetErrorMessage(message);
                     throw new HttpRequestException(errorMessage);
+                }
+                if (typeof(TResult) == typeof(string))
+                {
+                    string result = await response.Content.ReadAsStringAsync();
+                    return (TResult)(object)result;
                 }
                 var stream = await response.Content.ReadAsStreamAsync();
                 if (mActAsACallable)
