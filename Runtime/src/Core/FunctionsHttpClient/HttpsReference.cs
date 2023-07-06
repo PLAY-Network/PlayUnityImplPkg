@@ -106,6 +106,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 
         private async Task<TResult> CallInternalAsync<TPayload, TResult>(TPayload payload)
         {
+            UnityEngine.Debug.Log(mCallAddress);
             var request = new HttpRequestMessage(
                     HttpMethod.Post,
                     mCallAddress);
