@@ -1,2 +1,2 @@
 # RGN ImplFirebase
-Package version: 0.7.0-dev.301
+Package version: 0.7.0-dev.302
