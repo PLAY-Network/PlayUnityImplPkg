@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Threading.Tasks;
+using RGN.Modules.Messaging;
 using RGN.Modules.SignIn;
 using UnityEngine;
 
@@ -7,6 +9,7 @@ namespace RGN.Impl.Firebase
     public class RGNUnityInitializer : MonoSingleton<RGNUnityInitializer>
     {
         [SerializeField] private bool _autoGuestLogin = true;
+        [SerializeField] private bool _initializeMessagingModule = true;
 
         protected override async void OnAwakeInternal()
         {
@@ -31,19 +34,28 @@ namespace RGN.Impl.Firebase
             RGNCoreBuilder.CreateInstance(new Dependencies());
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
             await RGNCoreBuilder.BuildAsync();
+            if (_initializeMessagingModule)
+            {
+                Debug.Log(MessagingModule.I);
+            }
         }
         protected virtual void Dispose(bool disposing)
         {
             RGNCoreBuilder.Dispose();
         }
 
-        private void OnAuthenticationChanged(EnumLoginState enumLoginState, EnumLoginError error)
+        private void OnAuthenticationChanged(AuthState authState)
         {
-            if (_autoGuestLogin && enumLoginState == EnumLoginState.NotLoggedIn)
+            if (_autoGuestLogin && authState.LoginState == EnumLoginState.NotLoggedIn)
             {
-                Debug.Log("Automatically logging in as a guest");
-                GuestSignInModule.I.TryToSignIn();
+                StartCoroutine(CallTryToLoginAfterAFrame());
             }
+        }
+        private IEnumerator CallTryToLoginAfterAFrame()
+        {
+            yield return null;
+            Debug.Log("Automatically logging in as a guest");
+            GuestSignInModule.I.TryToSignIn();
         }
     }
 }

@@ -52,12 +52,13 @@ namespace RGN.Samples
             RGNCore.I.AuthenticationChanged -= OnAuthenticationChanged;
         }
 
-        private void OnAuthenticationChanged(EnumLoginState state, EnumLoginError error)
+        private void OnAuthenticationChanged(AuthState authState)
         {
-            SetUserLoggedIn(state == EnumLoginState.Success &&
+            SetUserLoggedIn(authState.LoginState == EnumLoginState.Success &&
                 RGNCore.I.AuthorizedProviders == EnumAuthProvider.Email);
-            _canvasGroup.interactable = true;
-            _fullScreenLoadingIndicator.SetEnabled(false);
+            bool isProcessing = authState.LoginState == EnumLoginState.Processing;
+            _canvasGroup.interactable = !isProcessing;
+            _fullScreenLoadingIndicator.SetEnabled(isProcessing);
         }
         private void OnLoginButtonClick()
         {
