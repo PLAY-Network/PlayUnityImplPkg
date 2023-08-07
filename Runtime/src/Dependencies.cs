@@ -15,11 +15,8 @@ namespace RGN.Impl.Firebase
     {
         public IApplicationStore ApplicationStore { get; }
         public IApp App { get; }
-        public IApp ReadyMasterApp { get; }
         public IAnalytics Analytics { get; }
-        public IAuth Auth { get; }
         public IAuth ReadyMasterAuth { get; }
-        public IFunctions Fn { get; }
         public IFunctions ReadyMasterFunction { get; }
         public IDynamicLinks DynamicLinks { get; }
         public IMessaging Messaging { get; }
@@ -47,14 +44,13 @@ namespace RGN.Impl.Firebase
                 ProjectId = applicationStore.GetRGNMasterProjectId,
             };
             var readyMasterApp = FirebaseApp.Create(appOptions, RGNCore.READY_MASTER_APP_CONFIG_NAME);
-            ReadyMasterApp = new Core.App(readyMasterApp);
 
-            Auth = new Core.Auth.Auth(FirebaseAuth.GetAuth(app));
-            ReadyMasterAuth = new Core.Auth.Auth(FirebaseAuth.GetAuth(readyMasterApp));
 
+            var readyMasterAuth = new Core.Auth.Auth(FirebaseAuth.GetAuth(readyMasterApp));
+            ReadyMasterAuth = readyMasterAuth;
             Json = new Serialization.Json();
-            Fn = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
             ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
+            readyMasterAuth.SetFunctions(ReadyMasterFunction);
 
             DynamicLinks = new Core.DynamicLinks.DynamicLinks();
             Messaging = new Core.Messaging.Messaging();

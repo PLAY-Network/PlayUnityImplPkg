@@ -1,76 +1,73 @@
-﻿using Firebase.Auth;
+using Firebase.Auth;
 using RGN.Dependencies.Core.Auth;
+using RGN.Dependencies.Core.Functions;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using FirebaseCredential = Firebase.Auth.Credential;
 
 namespace RGN.Impl.Firebase.Core.Auth
 {
     public sealed class Auth : IAuth
     {
-        private readonly FirebaseAuth firebaseAuth;
+        private readonly FirebaseAuth mFirebaseAuth;
+        private IFunctions _functions;
 
-        IUser IAuth.CurrentUser => firebaseAuth.CurrentUser == null ? null : new User(firebaseAuth.CurrentUser); //TODO: cache it
-
-        public IFaceBookAuthProvider faceBookAuthProvider { get; set; }
-        public IEmailAuthProvider emailAuthProvider { get; set; }
-        public IGoogleAuthProvider googleAuthProvider { get; set; }
-        public IOAuthProvider oAuthProvider { get; set; }
+        IUser IAuth.CurrentUser => mFirebaseAuth.CurrentUser == null ? null : new User(mFirebaseAuth.CurrentUser); //TODO: cache it
 
         event EventHandler IAuth.StateChanged
         {
             add
             {
-                firebaseAuth.StateChanged += value;
+                mFirebaseAuth.StateChanged += value;
             }
             remove
             {
-                firebaseAuth.StateChanged -= value;
+                mFirebaseAuth.StateChanged -= value;
             }
         }
 
         internal Auth(FirebaseAuth firebaseAuth)
         {
-            this.firebaseAuth = firebaseAuth;
-            faceBookAuthProvider = new FaceBookAuthProvider();
-            emailAuthProvider = new EmailAuthProvider();
-            googleAuthProvider = new GoogleAuthProvider();
-            oAuthProvider = new OAuthProvider();
+            mFirebaseAuth = firebaseAuth;
+        }
+        internal void SetFunctions(IFunctions functions)
+        {
+            _functions = functions;
         }
 
         Task IAuth.SendPasswordResetEmailAsync(string email)
         {
-            return firebaseAuth.SendPasswordResetEmailAsync(email);
-        }
-
-        async Task<IUser> IAuth.SignInAnonymouslyAsync()
-        {
-            var user = await firebaseAuth.SignInAnonymouslyAsync();
-            return new User(user);
-        }
-
-        async Task<IUser> IAuth.SignInWithCredentialAsync(ICredential credential)
-        {
-            FirebaseCredential firebaseCredential = credential.Credential as FirebaseCredential;
-            var user = await firebaseAuth.SignInWithCredentialAsync(firebaseCredential);
-            return new User(user);
+            return mFirebaseAuth.SendPasswordResetEmailAsync(email);
         }
 
         async Task<IUser> IAuth.SignInWithCustomTokenAsync(string token)
         {
-            var user = await firebaseAuth.SignInWithCustomTokenAsync(token);
+            var user = await mFirebaseAuth.SignInWithCustomTokenAsync(token);
             return new User(user);
         }
 
         async Task<IUser> IAuth.SignInWithEmailAndPasswordAsync(string email, string password)
         {
-            var user = await firebaseAuth.SignInWithEmailAndPasswordAsync(email, password);
+            string customToken = await SignInWithEmailAndPasswordAsync(email, password);
+            var user = await mFirebaseAuth.SignInWithCustomTokenAsync(customToken);
             return new User(user);
+        }
+
+        private async Task<string> SignInWithEmailAndPasswordAsync(string email, string password)
+        {
+            var functionAuthenticate = _functions.GetHttpsCallable("user-signInWithEmailPassword");
+            var response = await functionAuthenticate.CallAsync<Dictionary<string, string>, Dictionary<string, object>>(
+                new Dictionary<string, string>() {
+                    { "email", email },
+                    { "password", password }
+                });
+            string customToken = (string)response["customToken"];
+            return customToken;
         }
 
         void IAuth.SignOut()
         {
-            firebaseAuth.SignOut();
+            mFirebaseAuth.SignOut();
         }
     }
 }
