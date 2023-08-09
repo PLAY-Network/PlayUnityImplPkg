@@ -55,7 +55,7 @@ namespace RGN.Impl.Firebase
         {
             yield return null;
             Debug.Log("Automatically logging in as a guest");
-            GuestSignInModule.I.TryToSignIn();
+            GuestSignInModule.I.TryToSignInAsync();
         }
     }
 }
