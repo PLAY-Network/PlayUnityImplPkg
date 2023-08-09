@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Firebase.Auth;
 using RGN.Dependencies.Core.Auth;
 using RGN.Dependencies.Core.Functions;
-using UnityEngine;
 
 namespace RGN.Impl.Firebase.Core.Auth
 {
