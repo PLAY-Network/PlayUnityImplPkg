@@ -3,7 +3,6 @@ using Firebase.Auth;
 using RGN.Dependencies;
 using RGN.Dependencies.Core;
 using RGN.Dependencies.Core.Auth;
-using RGN.Dependencies.Core.DynamicLinks;
 using RGN.Dependencies.Core.Functions;
 using RGN.Dependencies.Core.Messaging;
 using RGN.Dependencies.Engine;
@@ -18,7 +17,6 @@ namespace RGN.Impl.Firebase
         public IAnalytics Analytics { get; }
         public IAuth ReadyMasterAuth { get; }
         public IFunctions ReadyMasterFunction { get; }
-        public IDynamicLinks DynamicLinks { get; }
         public IMessaging Messaging { get; }
         public IJson Json { get; }
         public IEngineApp EngineApp { get; }
@@ -52,7 +50,6 @@ namespace RGN.Impl.Firebase
             ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
             readyMasterAuth.SetFunctions(ReadyMasterFunction);
 
-            DynamicLinks = new Core.DynamicLinks.DynamicLinks();
             Messaging = new Core.Messaging.Messaging();
 
             EngineApp = new Engine.EngineApp();
