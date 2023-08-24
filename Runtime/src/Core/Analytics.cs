@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using Firebase.Analytics;
 using RGN.ImplDependencies.Core;
 
 namespace RGN.Impl.Firebase.Core
