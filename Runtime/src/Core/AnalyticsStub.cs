@@ -3,7 +3,7 @@ using RGN.ImplDependencies.Core;
 
 namespace RGN.Impl.Firebase.Core
 {
-    public sealed class Analytics : IAnalytics
+    public sealed class AnalyticsStub : IAnalytics
     {
         public Task<string> GetAnalyticsInstanceIdAsync()
         {

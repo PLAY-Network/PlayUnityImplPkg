@@ -9,7 +9,6 @@ namespace RGN.Impl.Firebase
     public class RGNUnityInitializer : MonoSingleton<RGNUnityInitializer>
     {
         [SerializeField] private bool _autoGuestLogin = true;
-        [SerializeField] private bool _initializeMessagingModule = true;
 
         protected override async void OnAwakeInternal()
         {
@@ -34,10 +33,6 @@ namespace RGN.Impl.Firebase
             RGNCoreBuilder.CreateInstance(new Dependencies());
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
             await RGNCoreBuilder.BuildAsync();
-            if (_initializeMessagingModule)
-            {
-                Debug.Log(MessagingModule.I);
-            }
         }
         protected virtual void Dispose(bool disposing)
         {

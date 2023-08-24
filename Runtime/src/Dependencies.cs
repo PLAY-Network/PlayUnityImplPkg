@@ -13,6 +13,7 @@ namespace RGN.Impl.Firebase
     public sealed class Dependencies : IDependencies
     {
         public IRGNAnalytics RGNAnalytics { get; }
+        public IRGNMessaging RGNMessaging { get; }
         public IApplicationStore ApplicationStore { get; }
         public IApp App { get; }
         public IAnalytics Analytics { get; }
@@ -51,12 +52,12 @@ namespace RGN.Impl.Firebase
             ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
             readyMasterAuth.SetFunctions(ReadyMasterFunction);
 
-            Messaging = new Core.Messaging.Messaging();
+            Messaging = new Core.MessagingStub();
 
             EngineApp = new Engine.EngineApp();
             Time = new Engine.Time();
             Logger = new Engine.Logger();
-            Analytics = new Core.Analytics();
+            Analytics = new Core.AnalyticsStub();
         }
     }
 }
