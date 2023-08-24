@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Core.Messaging;
+using RGN.ImplDependencies.Core.Messaging;
 using FirebaseMessageReceivedEventArgs = Firebase.Messaging.MessageReceivedEventArgs;
 
 namespace RGN.Impl.Firebase.Core.Messaging

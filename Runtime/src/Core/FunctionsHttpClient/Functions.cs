@@ -1,7 +1,7 @@
 using System.Net.Http;
-using RGN.Dependencies.Core.Auth;
-using RGN.Dependencies.Core.Functions;
-using RGN.Dependencies.Serialization;
+using RGN.ImplDependencies.Core.Auth;
+using RGN.ImplDependencies.Core.Functions;
+using RGN.ImplDependencies.Serialization;
 using RGN.Network;
 
 namespace RGN.Impl.Firebase.Core.FunctionsHttpClient

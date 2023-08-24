@@ -1,4 +1,4 @@
-using RGN.Dependencies.Core.Auth;
+using RGN.ImplDependencies.Core.Auth;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FirebaseCredential = Firebase.Auth.Credential;

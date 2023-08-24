@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Core.Messaging;
+using RGN.ImplDependencies.Core.Messaging;
 using System.Collections.Generic;
 using FirebaseMessage = Firebase.Messaging.FirebaseMessage;
 

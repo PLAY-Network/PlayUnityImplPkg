@@ -1,17 +1,18 @@
 using Firebase;
 using Firebase.Auth;
-using RGN.Dependencies;
-using RGN.Dependencies.Core;
-using RGN.Dependencies.Core.Auth;
-using RGN.Dependencies.Core.Functions;
-using RGN.Dependencies.Core.Messaging;
-using RGN.Dependencies.Engine;
-using RGN.Dependencies.Serialization;
+using RGN.ImplDependencies.Core;
+using RGN.ImplDependencies.Core.Auth;
+using RGN.ImplDependencies.Core.Functions;
+using RGN.ImplDependencies.Core.Messaging;
+using RGN.ImplDependencies.Engine;
+using RGN.ImplDependencies.Serialization;
+using RGN.ModuleDependencies;
 
 namespace RGN.Impl.Firebase
 {
     public sealed class Dependencies : IDependencies
     {
+        public IRGNAnalytics RGNAnalytics { get; }
         public IApplicationStore ApplicationStore { get; }
         public IApp App { get; }
         public IAnalytics Analytics { get; }

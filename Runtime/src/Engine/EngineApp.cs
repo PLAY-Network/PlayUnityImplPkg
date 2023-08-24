@@ -1,4 +1,4 @@
-using RGN.Dependencies.Engine;
+using RGN.ImplDependencies.Engine;
 using UnityEngine;
 
 namespace RGN.Impl.Firebase.Engine

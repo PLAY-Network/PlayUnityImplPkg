@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Core.Auth;
+using RGN.ImplDependencies.Core.Auth;
 using FirebaseCredential = Firebase.Auth.Credential;
 
 namespace RGN.Impl.Firebase.Core.Auth

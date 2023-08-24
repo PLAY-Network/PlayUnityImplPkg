@@ -1,4 +1,4 @@
-using RGN.Dependencies.Core.Auth;
+using RGN.ImplDependencies.Core.Auth;
 using System;
 using IFirebaseUserInfo = Firebase.Auth.IUserInfo;
 
