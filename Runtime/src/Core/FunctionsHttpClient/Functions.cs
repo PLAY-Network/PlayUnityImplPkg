@@ -13,17 +13,23 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         private readonly IJson mJson;
         private readonly IAuth mReadyMasterAuth;
         private readonly string mRngMasterProjectId;
+        private readonly string mApiKey;
         private string _baseCloudAddress;
 
-        internal Functions(IJson json, IAuth readyMasterAuth, string rngMasterProjectId)
+        internal Functions(
+            IJson json,
+            IAuth readyMasterAuth,
+            string rngMasterProjectId,
+            string apiKey)
         {
             mJson = json;
             mReadyMasterAuth = readyMasterAuth;
             mRngMasterProjectId = rngMasterProjectId;
+            mApiKey = apiKey;
             _baseCloudAddress = $"https://{REGION}-{mRngMasterProjectId}.cloudfunctions.net/";
         }
 
-        IHttpsCallableReference IFunctions.GetHttpsCallable(string name)
+        IHttpsCallableReference IFunctions.GetHttpsCallable(string name, bool computeHmac)
         {
             HttpClient newClient = HttpClientFactory.Get();
             return new HttpsReference(
@@ -31,11 +37,13 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 mJson,
                 mReadyMasterAuth,
                 mRngMasterProjectId,
+                mApiKey,
                 _baseCloudAddress,
                 name,
-                true);
+                true,
+                computeHmac);
         }
-        IHttpsCallableReference IFunctions.GetHttpsRequest(string name)
+        IHttpsCallableReference IFunctions.GetHttpsRequest(string name, bool computeHmac)
         {
             HttpClient newClient = HttpClientFactory.Get();
             return new HttpsReference(
@@ -43,9 +51,11 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 mJson,
                 mReadyMasterAuth,
                 mRngMasterProjectId,
+                mApiKey,
                 _baseCloudAddress,
                 name,
-                false);
+                false,
+                computeHmac);
         }
 
         void IFunctions.UseFunctionsEmulator(string hostAndPort)

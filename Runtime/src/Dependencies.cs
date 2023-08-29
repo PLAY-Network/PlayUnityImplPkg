@@ -49,7 +49,11 @@ namespace RGN.Impl.Firebase
             var readyMasterAuth = new Core.Auth.Auth(FirebaseAuth.GetAuth(readyMasterApp));
             ReadyMasterAuth = readyMasterAuth;
             Json = new Serialization.Json();
-            ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
+            ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(
+                Json,
+                ReadyMasterAuth,
+                ApplicationStore.GetRGNMasterProjectId,
+                applicationStore.GetRGNApiKey);
             readyMasterAuth.SetFunctions(ReadyMasterFunction);
 
             Messaging = new Core.MessagingStub();

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using RGN.ImplDependencies.Core.Auth;
@@ -18,26 +18,32 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         private readonly IJson mJson;
         private readonly IAuth mReadyMasterAuth;
         private readonly string mRngMasterProjectId;
+        private readonly string mApiKey;
         private readonly string mFunctionName;
         private readonly Uri mCallAddress;
         private readonly bool mActAsACallable;
+        private readonly bool mComputeHmac;
 
         internal HttpsReference(
             HttpClient httpClient,
             IJson json,
             IAuth readyMasterAuth,
             string rngMasterProjectId,
+            string apiKey,
             string baseAddress,
             string functionName,
-            bool actAsACallable)
+            bool actAsACallable,
+            bool computeHmac)
         {
             mHttpClient = httpClient;
             mJson = json;
             mReadyMasterAuth = readyMasterAuth;
             mRngMasterProjectId = rngMasterProjectId;
+            mApiKey = apiKey;
             mFunctionName = functionName;
             mCallAddress = new Uri(new Uri(baseAddress), functionName);
             mActAsACallable = actAsACallable;
+            mComputeHmac = computeHmac;
         }
 
         Task IHttpsCallableReference.CallAsync()
@@ -90,6 +96,11 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 string token = await mReadyMasterAuth.CurrentUser.TokenAsync(false);
                 request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + token);
             }
+            if (mComputeHmac)
+            {
+                string hmac = ComputeHmac(mApiKey, content);
+                request.Headers.TryAddWithoutValidation("HMAC", hmac);
+            }
             using (var response = await mHttpClient.SendAsync(
                 request,
                 HttpCompletionOption.ResponseHeadersRead))
@@ -137,6 +148,11 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 string token = await mReadyMasterAuth.CurrentUser.TokenAsync(false);
                 request.Headers.TryAddWithoutValidation("Authorization", "Bearer " + token);
             }
+            if (mComputeHmac)
+            {
+                string hmac = ComputeHmac(mApiKey, content);
+                request.Headers.TryAddWithoutValidation("HMAC", hmac);
+            }
             using (var response = await mHttpClient.SendAsync(
                 request,
                 HttpCompletionOption.ResponseHeadersRead))
@@ -174,6 +190,16 @@ cloud_function%22%20resource.labels.function_name%3D%22{mFunctionName}%22?projec
 #else
             return mFunctionName + ": " + message;
 #endif
+        }
+        private string ComputeHmac(string secret, string message)
+        {
+            var key = Encoding.UTF8.GetBytes(secret);
+            using (var hasher = new HMACSHA256(key))
+            {
+                var messageBytes = Encoding.UTF8.GetBytes(message);
+                var hash = hasher.ComputeHash(messageBytes);
+                return BitConverter.ToString(hash).Replace("-", "").ToLower();
+            }
         }
     }
 }
