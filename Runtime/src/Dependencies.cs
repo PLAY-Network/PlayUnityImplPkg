@@ -1,5 +1,6 @@
 using Firebase;
 using Firebase.Auth;
+using RGN.ImplDependencies.Assets;
 using RGN.ImplDependencies.Core;
 using RGN.ImplDependencies.Core.Auth;
 using RGN.ImplDependencies.Core.Functions;
@@ -24,6 +25,8 @@ namespace RGN.Impl.Firebase
         public IEngineApp EngineApp { get; }
         public ITime Time { get; }
         public ILogger Logger { get; }
+        public IAssetCache AssetCache { get; }
+        public IAssetDownloader AssetDownloader { get; }
 
         public Dependencies()
             : this(RGN.ApplicationStore.LoadFromResources())
@@ -62,6 +65,8 @@ namespace RGN.Impl.Firebase
             Time = new Engine.Time();
             Logger = new Engine.Logger();
             Analytics = new Core.AnalyticsStub();
+            AssetCache = new Assets.FileAssetsCache();
+            AssetDownloader = new Assets.HttpAssetDownloader();
         }
     }
 }
