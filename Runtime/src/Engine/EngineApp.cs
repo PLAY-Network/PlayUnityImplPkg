@@ -34,7 +34,10 @@ namespace RGN.Impl.Firebase.Engine
         public void DestroyGameObjectWithUpdater(IRGNUpdater rgnUpdater)
         {
             var asComponent = rgnUpdater as RGNUnityUpdater;
-            Object.Destroy(asComponent?.gameObject);
+            if ( asComponent != null && asComponent.gameObject)
+            {
+                Object.Destroy(asComponent.gameObject);
+            }
         }
     }
 }
