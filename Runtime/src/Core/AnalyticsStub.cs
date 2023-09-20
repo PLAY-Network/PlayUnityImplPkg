@@ -59,6 +59,15 @@ namespace RGN.Impl.Firebase.Core
         }
         public void LogEvent(
             string name,
+            string parameterNameOne,
+            string parameterValueOne,
+
+            string parameterNameTwo,
+            double parameterValueTwo)
+        {
+        }
+        public void LogEvent(
+            string name,
             params AnalyticsParameter[] analyticParameters)
         {
         }
