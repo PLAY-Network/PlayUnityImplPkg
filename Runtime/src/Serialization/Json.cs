@@ -1,6 +1,6 @@
 using System.IO;
 using Newtonsoft.Json;
-using RGN.Dependencies.Serialization;
+using RGN.ImplDependencies.Serialization;
 using UnityEngine;
 
 namespace RGN.Impl.Firebase.Serialization

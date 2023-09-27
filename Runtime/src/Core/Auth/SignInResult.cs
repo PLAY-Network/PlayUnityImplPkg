@@ -1,4 +1,4 @@
-﻿using RGN.Dependencies.Core.Auth;
+using RGN.ImplDependencies.Core.Auth;
 using FirebaseSignInResult = Firebase.Auth.SignInResult;
 
 namespace RGN.Impl.Firebase.Core.Auth

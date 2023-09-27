@@ -23,7 +23,7 @@ namespace RGN.Impl.Firebase
         private readonly Stack<IUIScreen> mScreensStack = new Stack<IUIScreen>();
 
         private IUIScreen _currentVisibleScreen;
-        private ScreenAnimation? _screenAnimation;
+        private ScreenAnimation _screenAnimation;
 
         protected override async Task InitializeAsync()
         {
@@ -66,11 +66,11 @@ namespace RGN.Impl.Firebase
             {
                 CloseTopScreen();
             }
-            if (_screenAnimation.HasValue && !_screenAnimation.Value.IsDone)
+            if (_screenAnimation != null && !_screenAnimation.IsDone)
             {
-                _screenAnimation.Value.Tick();
+                _screenAnimation.Tick();
             }
-            if (_screenAnimation.HasValue && _screenAnimation.Value.IsDone)
+            if (_screenAnimation != null && _screenAnimation.IsDone)
             {
                 _screenAnimation = null;
             }

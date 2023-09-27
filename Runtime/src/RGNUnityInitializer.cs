@@ -1,31 +1,26 @@
+using System.Collections;
 using System.Threading.Tasks;
 using RGN.Modules.SignIn;
 using UnityEngine;
 
 namespace RGN.Impl.Firebase
 {
-    public class RGNUnityInitializer : MonoBehaviour
+    public class RGNUnityInitializer : MonoSingleton<RGNUnityInitializer>
     {
         [SerializeField] private bool _autoGuestLogin = true;
-        [SerializeField] private bool _dontDestroyOnLoadNewScene = true;
 
-        private bool _initialized = false;
-        private async void Awake()
+        protected override async void OnAwakeInternal()
         {
-            if (_dontDestroyOnLoadNewScene)
-            {
-                DontDestroyOnLoad(gameObject);
-            }
             await InitializeAsync();
         }
-        private void OnDestroy()
+        protected override void OnDestroyInternal()
         {
             Dispose(true);
         }
 
         protected virtual async Task InitializeAsync()
         {
-            if (_initialized)
+            if (RGNCoreBuilder.Initialized)
             {
                 return;
             }
@@ -37,20 +32,24 @@ namespace RGN.Impl.Firebase
             RGNCoreBuilder.CreateInstance(new Dependencies());
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
             await RGNCoreBuilder.BuildAsync();
-            _initialized = true;
         }
         protected virtual void Dispose(bool disposing)
         {
             RGNCoreBuilder.Dispose();
         }
 
-        private void OnAuthenticationChanged(EnumLoginState enumLoginState, EnumLoginError error)
+        private void OnAuthenticationChanged(AuthState authState)
         {
-            if (_autoGuestLogin && enumLoginState == EnumLoginState.NotLoggedIn)
+            if (_autoGuestLogin && authState.LoginState == EnumLoginState.NotLoggedIn)
             {
-                Debug.Log("Automatically logging in as a guest");
-                GuestSignInModule.I.TryToSignIn();
+                StartCoroutine(CallTryToLoginAfterAFrame());
             }
+        }
+        private IEnumerator CallTryToLoginAfterAFrame()
+        {
+            yield return null;
+            Debug.Log("Automatically logging in as a guest");
+            GuestSignInModule.I.TryToSignInAsync();
         }
     }
 }

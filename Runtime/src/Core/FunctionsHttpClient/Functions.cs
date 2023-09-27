@@ -1,7 +1,8 @@
 using System.Net.Http;
-using RGN.Dependencies.Core.Auth;
-using RGN.Dependencies.Core.Functions;
-using RGN.Dependencies.Serialization;
+using RGN.ImplDependencies.Core.Auth;
+using RGN.ImplDependencies.Core.Functions;
+using RGN.ImplDependencies.Serialization;
+using RGN.Network;
 
 namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 {
@@ -12,27 +13,51 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         private readonly IJson mJson;
         private readonly IAuth mReadyMasterAuth;
         private readonly string mRngMasterProjectId;
+        private readonly string mApiKey;
         private string _baseCloudAddress;
 
-        internal Functions(IJson json, IAuth readyMasterAuth, string rngMasterProjectId)
+        internal Functions(
+            IJson json,
+            IAuth readyMasterAuth,
+            string rngMasterProjectId,
+            string apiKey)
         {
             mJson = json;
             mReadyMasterAuth = readyMasterAuth;
             mRngMasterProjectId = rngMasterProjectId;
+            mApiKey = apiKey;
             _baseCloudAddress = $"https://{REGION}-{mRngMasterProjectId}.cloudfunctions.net/";
         }
 
-        IHttpsCallableReference IFunctions.GetHttpsCallable(string name)
+        IHttpsCallableReference IFunctions.GetHttpsCallable(string name, bool computeHmac)
         {
             HttpClient newClient = HttpClientFactory.Get();
-            return new HttpsCallableReference(
+            return new HttpsReference(
                 newClient,
                 mJson,
                 mReadyMasterAuth,
                 mRngMasterProjectId,
+                mApiKey,
                 _baseCloudAddress,
-                name);
+                name,
+                true,
+                computeHmac);
         }
+        IHttpsCallableReference IFunctions.GetHttpsRequest(string name, bool computeHmac)
+        {
+            HttpClient newClient = HttpClientFactory.Get();
+            return new HttpsReference(
+                newClient,
+                mJson,
+                mReadyMasterAuth,
+                mRngMasterProjectId,
+                mApiKey,
+                _baseCloudAddress,
+                name,
+                false,
+                computeHmac);
+        }
+
         void IFunctions.UseFunctionsEmulator(string hostAndPort)
         {
             _baseCloudAddress = $"http://{hostAndPort}/{mRngMasterProjectId}/{REGION}/";

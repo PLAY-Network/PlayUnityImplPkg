@@ -1,41 +1,32 @@
 using Firebase;
 using Firebase.Auth;
-using Firebase.Database;
-using Firebase.Firestore;
-using Firebase.Functions;
-using Firebase.Storage;
-using RGN.Dependencies;
-using RGN.Dependencies.Core;
-using RGN.Dependencies.Core.Auth;
-using RGN.Dependencies.Core.DynamicLinks;
-using RGN.Dependencies.Core.Functions;
-using RGN.Dependencies.Core.Messaging;
-using RGN.Dependencies.Core.RealTimeDB;
-using RGN.Dependencies.Core.Storage;
-using RGN.Dependencies.Engine;
-using RGN.Dependencies.Serialization;
+using RGN.ImplDependencies.Assets;
+using RGN.ImplDependencies.Core;
+using RGN.ImplDependencies.Core.Auth;
+using RGN.ImplDependencies.Core.Functions;
+using RGN.ImplDependencies.Core.Messaging;
+using RGN.ImplDependencies.Engine;
+using RGN.ImplDependencies.Serialization;
+using RGN.ModuleDependencies;
 
 namespace RGN.Impl.Firebase
 {
     public sealed class Dependencies : IDependencies
     {
+        public IRGNAnalytics RGNAnalytics { get; }
+        public IRGNMessaging RGNMessaging { get; }
         public IApplicationStore ApplicationStore { get; }
         public IApp App { get; }
-        public IApp ReadyMasterApp { get; }
         public IAnalytics Analytics { get; }
-        public IAuth Auth { get; }
         public IAuth ReadyMasterAuth { get; }
-        public IFunctions Fn { get; }
         public IFunctions ReadyMasterFunction { get; }
-        public IStorage ReadyMasterStorage { get; }
-        public IDocumentDB ReadyMasterFirestore { get; }
-        public IRealTimeDB ReadyMasterRealtimeDatabase { get; }
-        public IDynamicLinks DynamicLinks { get; }
         public IMessaging Messaging { get; }
         public IJson Json { get; }
         public IEngineApp EngineApp { get; }
         public ITime Time { get; }
         public ILogger Logger { get; }
+        public IAssetCache AssetCache { get; }
+        public IAssetDownloader AssetDownloader { get; }
 
         public Dependencies()
             : this(RGN.ApplicationStore.LoadFromResources())
@@ -56,27 +47,26 @@ namespace RGN.Impl.Firebase
                 ProjectId = applicationStore.GetRGNMasterProjectId,
             };
             var readyMasterApp = FirebaseApp.Create(appOptions, RGNCore.READY_MASTER_APP_CONFIG_NAME);
-            ReadyMasterApp = new Core.App(readyMasterApp);
 
-            Auth = new Core.Auth.Auth(FirebaseAuth.GetAuth(app));
-            ReadyMasterAuth = new Core.Auth.Auth(FirebaseAuth.GetAuth(readyMasterApp));
 
+            var readyMasterAuth = new Core.Auth.Auth(FirebaseAuth.GetAuth(readyMasterApp));
+            ReadyMasterAuth = readyMasterAuth;
             Json = new Serialization.Json();
-            Fn = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
-            ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(Json, ReadyMasterAuth, ApplicationStore.GetRGNMasterProjectId);
+            ReadyMasterFunction = new Core.FunctionsHttpClient.Functions(
+                Json,
+                ReadyMasterAuth,
+                ApplicationStore.GetRGNMasterProjectId,
+                applicationStore.GetRGNApiKey);
+            readyMasterAuth.SetFunctions(ReadyMasterFunction);
 
-            ReadyMasterFirestore = new Core.DocumentDB(FirebaseFirestore.GetInstance(readyMasterApp));
-            ReadyMasterRealtimeDatabase = new Core.RealTimeDB.RealTimeDB(FirebaseDatabase.GetInstance(readyMasterApp));
-
-            ReadyMasterStorage = new Core.Storage.Storage(FirebaseStorage.GetInstance(readyMasterApp, applicationStore.GetRGNStorageURL));
-
-            DynamicLinks = new Core.DynamicLinks.DynamicLinks();
-            Messaging = new Core.Messaging.Messaging();
+            Messaging = new Core.MessagingStub();
 
             EngineApp = new Engine.EngineApp();
             Time = new Engine.Time();
             Logger = new Engine.Logger();
-            Analytics = new Core.Analytics();
+            Analytics = new Core.AnalyticsStub();
+            AssetCache = new Assets.FileAssetsCache();
+            AssetDownloader = new Assets.HttpAssetDownloader();
         }
     }
 }

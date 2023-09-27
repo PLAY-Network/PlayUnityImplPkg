@@ -1,7 +1,7 @@
-﻿using Firebase;
-using RGN.Dependencies.Core;
+using Firebase;
+using RGN.ImplDependencies.Core;
 using System.Threading.Tasks;
-using DependencyStatus = RGN.Dependencies.Core.DependencyStatus;
+using DependencyStatus = RGN.ImplDependencies.Core.DependencyStatus;
 
 namespace RGN.Impl.Firebase.Core
 {

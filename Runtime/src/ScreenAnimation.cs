@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace RGN.Impl.Firebase
 {
-    internal struct ScreenAnimation
+    internal sealed class ScreenAnimation
     {
         internal bool IsDone { get; private set; }
 
