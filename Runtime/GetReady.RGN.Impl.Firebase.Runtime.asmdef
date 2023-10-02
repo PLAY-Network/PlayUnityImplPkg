@@ -8,8 +8,14 @@
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "RGNCore.dll",
+        "Newtonsoft.Json.dll",
+        "Firebase.Auth.dll",
+        "Firebase.App.dll",
+        "RGNSignInGuest.dll"
+    ],
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
