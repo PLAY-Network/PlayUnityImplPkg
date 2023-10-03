@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Threading.Tasks;
-using RGN.Modules.SignIn;
 using UnityEngine;
 
 namespace RGN.Impl.Firebase
@@ -24,11 +23,6 @@ namespace RGN.Impl.Firebase
             {
                 return;
             }
-
-#if UNITY_STANDALONE_WIN
-            EmailSignInModule.InitializeWindowsDeepLink();
-#endif
-
             RGNCoreBuilder.CreateInstance(new Dependencies());
             RGNCore.I.AuthenticationChanged += OnAuthenticationChanged;
             await RGNCoreBuilder.BuildAsync();
@@ -48,8 +42,13 @@ namespace RGN.Impl.Firebase
         private IEnumerator CallTryToLoginAfterAFrame()
         {
             yield return null;
+            if (RGNCoreBuilder.I.Dependencies.RGNGuestSignIn == null)
+            {
+                RGNCoreBuilder.I.Dependencies.Logger.Log("The RGNGuestSignIn is not installed, skipping auto guest login.");
+                yield break;
+            }
             Debug.Log("Automatically logging in as a guest");
-            GuestSignInModule.I.TryToSignInAsync();
+            RGNCoreBuilder.I.Dependencies.RGNGuestSignIn.TryToSignInAsync();
         }
     }
 }
