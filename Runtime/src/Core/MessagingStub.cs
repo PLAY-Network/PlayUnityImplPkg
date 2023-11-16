@@ -5,8 +5,8 @@ namespace RGN.Impl.Firebase.Core
 {
     public sealed class MessagingStub : IMessaging
     {
-        public event Action<object, ITokenReceivedEventArgs> TokenReceived;
+        public event Action<object, ITokenReceivedEventArgs> TokenReceived { add { } remove { } }
 
-        public event Action<object, IMessageReceivedEventArgs> MessageReceived;
+        public event Action<object, IMessageReceivedEventArgs> MessageReceived { add { } remove { } }
     }
 }

@@ -15,6 +15,7 @@ namespace RGN.Impl.Firebase
     {
         public IRGNAnalytics RGNAnalytics { get; }
         public IRGNMessaging RGNMessaging { get; }
+        public IRGNGuestSignIn RGNGuestSignIn { get; }
         public IApplicationStore ApplicationStore { get; }
         public IApp App { get; }
         public IAnalytics Analytics { get; }
