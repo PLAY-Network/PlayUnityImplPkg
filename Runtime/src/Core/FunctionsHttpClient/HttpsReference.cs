@@ -99,7 +99,12 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             if (mComputeHmac)
             {
                 string hmac = ComputeHmac(mApiKey, content);
-                request.Headers.TryAddWithoutValidation("HMAC", hmac);
+                request.Headers.TryAddWithoutValidation("hmac", hmac);
+            }
+            string appId = RGNCore.I.AppIDForRequests;
+            if (!string.IsNullOrWhiteSpace(appId))
+            {
+                request.Headers.TryAddWithoutValidation("app-id", appId);
             }
             using (var response = await mHttpClient.SendAsync(
                 request,
@@ -151,7 +156,12 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             if (mComputeHmac)
             {
                 string hmac = ComputeHmac(mApiKey, content);
-                request.Headers.TryAddWithoutValidation("HMAC", hmac);
+                request.Headers.TryAddWithoutValidation("hmac", hmac);
+            }
+            string appId = RGNCore.I.AppIDForRequests;
+            if (!string.IsNullOrWhiteSpace(appId))
+            {
+                request.Headers.TryAddWithoutValidation("app-id", appId);
             }
             using (var response = await mHttpClient.SendAsync(
                 request,
