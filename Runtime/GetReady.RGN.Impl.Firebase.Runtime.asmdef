@@ -14,7 +14,8 @@
         "Newtonsoft.Json.dll",
         "Firebase.Auth.dll",
         "Firebase.App.dll",
-        "RGNSignInGuest.dll"
+        "RGNSignInGuest.dll",
+        "Unity.Tasks.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],
