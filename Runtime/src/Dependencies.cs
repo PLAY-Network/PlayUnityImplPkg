@@ -1,13 +1,17 @@
 using Firebase;
 using Firebase.Auth;
+using RGN.DeepLink;
 using RGN.ImplDependencies.Assets;
 using RGN.ImplDependencies.Core;
 using RGN.ImplDependencies.Core.Auth;
 using RGN.ImplDependencies.Core.Functions;
 using RGN.ImplDependencies.Core.Messaging;
+using RGN.ImplDependencies.DeepLink;
 using RGN.ImplDependencies.Engine;
 using RGN.ImplDependencies.Serialization;
+using RGN.ImplDependencies.WebForm;
 using RGN.ModuleDependencies;
+using RGN.WebForm;
 
 namespace RGN.Impl.Firebase
 {
@@ -28,6 +32,8 @@ namespace RGN.Impl.Firebase
         public ILogger Logger { get; }
         public IAssetCache AssetCache { get; }
         public IAssetDownloader AssetDownloader { get; }
+        public IDeepLink DeepLink { get; }
+        public IWebForm WebForm { get; }
 
         public Dependencies()
             : this(RGN.ApplicationStore.LoadFromResources())
@@ -68,6 +74,19 @@ namespace RGN.Impl.Firebase
             Analytics = new Core.AnalyticsStub();
             AssetCache = new Assets.FileAssetsCache();
             AssetDownloader = new Assets.HttpAssetDownloader();
+            DeepLink = new RGNDeepLink();
+            WebForm = new RGNWebForm();
+        }
+
+        public void Init(RGNCore rgnCore)
+        {
+            DeepLink.Init(rgnCore);
+        }
+
+        public void Dispose()
+        {
+            Analytics.Dispose();
+            DeepLink.Dispose();
         }
     }
 }
