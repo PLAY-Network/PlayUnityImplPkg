@@ -24,12 +24,13 @@ namespace RGN.WebForm
             OpenWebForm(url, redirectUrl);
         }
 
-        public void CreateWallet(WebFormCreateWalletRedirectDelegate redirectCallback)
+        public void CreateWallet(WebFormCreateWalletRedirectDelegate redirectCallback, string idToken)
         {
             _onWebFormCreateWalletRedirect = redirectCallback;
             string redirectUrl = RGNDeepLinkHttpUtility.GetDeepLinkRedirectScheme();
             string url = GetWebFormUrl(redirectUrl) +
                          "&returnSecureToken=false" +
+                         "&idToken=" + idToken +
                          "&view=createwallet";
             OpenWebForm(url, redirectUrl);
         }
