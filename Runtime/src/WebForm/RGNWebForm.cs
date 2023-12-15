@@ -30,7 +30,7 @@ namespace RGN.WebForm
             string redirectUrl = RGNDeepLinkHttpUtility.GetDeepLinkRedirectScheme();
             string url = GetWebFormUrl(redirectUrl) +
                          "&returnSecureToken=false" +
-                         "view=createwallet";
+                         "&view=createwallet";
             OpenWebForm(url, redirectUrl);
         }
 
