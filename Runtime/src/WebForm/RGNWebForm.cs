@@ -20,7 +20,7 @@ namespace RGN.WebForm
             string redirectUrl = RGNDeepLinkHttpUtility.GetDeepLinkRedirectScheme();
             string url = GetWebFormUrl(redirectUrl) +
                          "&returnSecureToken=false" +
-                         "idToken=" + idToken;
+                         "&idToken=" + idToken;
             OpenWebForm(url, redirectUrl);
         }
 
