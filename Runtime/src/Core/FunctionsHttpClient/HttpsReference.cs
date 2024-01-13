@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 using RGN.ImplDependencies.Core.Auth;
 using RGN.ImplDependencies.Core.Functions;
 using RGN.ImplDependencies.Serialization;
+using RGN.Network;
 
 namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 {
     public sealed class HttpsReference : IHttpsCallableReference
     {
         private const string EMPTY_JSON = "{}";
-
-        private readonly HttpClient mHttpClient;
+        
         private readonly IJson mJson;
         private readonly IAuth mReadyMasterAuth;
         private readonly string mRngMasterProjectId;
@@ -25,7 +25,6 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         private readonly bool mComputeHmac;
 
         internal HttpsReference(
-            HttpClient httpClient,
             IJson json,
             IAuth readyMasterAuth,
             string rngMasterProjectId,
@@ -35,7 +34,6 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             bool actAsACallable,
             bool computeHmac)
         {
-            mHttpClient = httpClient;
             mJson = json;
             mReadyMasterAuth = readyMasterAuth;
             mRngMasterProjectId = rngMasterProjectId;
@@ -106,18 +104,15 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             {
                 request.Headers.TryAddWithoutValidation("app-id", appId);
             }
-            using (var response = await mHttpClient.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead))
+            using HttpClient httpClient = HttpClientFactory.Get();
+            using HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            if (!response.IsSuccessStatusCode)
             {
-                if (!response.IsSuccessStatusCode)
-                {
-                    string message = await response.Content.ReadAsStringAsync();
-                    string errorMessage = GetErrorMessage(message);
-                    throw new HttpRequestException(errorMessage);
-                }
-                await response.Content.ReadAsStringAsync();
+                string message = await response.Content.ReadAsStringAsync();
+                string errorMessage = GetErrorMessage(message);
+                throw new HttpRequestException(errorMessage);
             }
+            await response.Content.ReadAsStringAsync();
         }
 
         private async Task<TResult> CallInternalAsync<TPayload, TResult>(TPayload payload)
@@ -163,30 +158,27 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
             {
                 request.Headers.TryAddWithoutValidation("app-id", appId);
             }
-            using (var response = await mHttpClient.SendAsync(
-                request,
-                HttpCompletionOption.ResponseHeadersRead))
+            using HttpClient httpClient = HttpClientFactory.Get();
+            using HttpResponseMessage response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
+            if (!response.IsSuccessStatusCode)
             {
-                if (!response.IsSuccessStatusCode)
-                {
-                    string message = await response.Content.ReadAsStringAsync();
-                    string errorMessage = GetErrorMessage(message);
-                    throw new HttpRequestException(errorMessage);
-                }
-                if (typeof(TResult) == typeof(string))
-                {
-                    string result = await response.Content.ReadAsStringAsync();
-                    return (TResult)(object)result;
-                }
-                var stream = await response.Content.ReadAsStreamAsync();
-                if (mActAsACallable)
-                {
-                    var dict = mJson.FromJson<Dictionary<object, TResult>>(stream);
-                    var result = dict["result"];
-                    return result;
-                }
-                return mJson.FromJson<TResult>(stream);
+                string message = await response.Content.ReadAsStringAsync();
+                string errorMessage = GetErrorMessage(message);
+                throw new HttpRequestException(errorMessage);
             }
+            if (typeof(TResult) == typeof(string))
+            {
+                string result = await response.Content.ReadAsStringAsync();
+                return (TResult)(object)result;
+            }
+            var stream = await response.Content.ReadAsStreamAsync();
+            if (mActAsACallable)
+            {
+                var dict = mJson.FromJson<Dictionary<object, TResult>>(stream);
+                var result = dict["result"];
+                return result;
+            }
+            return mJson.FromJson<TResult>(stream);
         }
 
         private string GetErrorMessage(string message)

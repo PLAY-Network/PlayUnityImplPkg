@@ -33,8 +33,8 @@ namespace RGN.Impl.Firebase.Assets
         {
             try
             {
-                HttpClient client = HttpClientFactory.Get("download");
-                var result = await client.GetAsync(url, cancellationToken);
+                using HttpClient httpClient = HttpClientFactory.Get("assets");
+                using HttpResponseMessage result = await httpClient.SendAsync(new HttpRequestMessage(HttpMethod.Get, url), cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 var bytes = await result.Content.ReadAsByteArrayAsync();
                 cancellationToken.ThrowIfCancellationRequested();

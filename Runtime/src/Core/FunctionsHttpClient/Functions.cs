@@ -1,8 +1,6 @@
-using System.Net.Http;
 using RGN.ImplDependencies.Core.Auth;
 using RGN.ImplDependencies.Core.Functions;
 using RGN.ImplDependencies.Serialization;
-using RGN.Network;
 
 namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 {
@@ -31,9 +29,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 
         IHttpsCallableReference IFunctions.GetHttpsCallable(string name, bool computeHmac)
         {
-            HttpClient newClient = HttpClientFactory.Get();
             return new HttpsReference(
-                newClient,
                 mJson,
                 mReadyMasterAuth,
                 mRngMasterProjectId,
@@ -45,9 +41,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
         }
         IHttpsCallableReference IFunctions.GetHttpsRequest(string name, bool computeHmac)
         {
-            HttpClient newClient = HttpClientFactory.Get();
             return new HttpsReference(
-                newClient,
                 mJson,
                 mReadyMasterAuth,
                 mRngMasterProjectId,
