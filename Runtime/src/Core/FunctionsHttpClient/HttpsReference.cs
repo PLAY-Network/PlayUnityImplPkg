@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Http;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,6 +15,7 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
     public sealed class HttpsReference : IHttpsCallableReference
     {
         private const string EMPTY_JSON = "{}";
+        private const int COLD_START_EMULATE_DELAY = 10000;
         
         private readonly IJson mJson;
         private readonly IAuth mReadyMasterAuth;
@@ -63,6 +65,10 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
 
         private async Task CallInternalAsync(object data)
         {
+#if READY_DEVELOPMENT && EMULATE_COLDSTART
+            var callSw = new Stopwatch();
+            callSw.Start();
+#endif
             UnityEngine.Debug.Log(mCallAddress);
             var request = new HttpRequestMessage(
                     HttpMethod.Post,
@@ -113,10 +119,19 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 throw new HttpRequestException(errorMessage);
             }
             await response.Content.ReadAsStringAsync();
+#if READY_DEVELOPMENT && EMULATE_COLDSTART
+            callSw.Stop();
+            int delayToReachColdStart = Math.Max(0, COLD_START_EMULATE_DELAY - (int)callSw.ElapsedMilliseconds);
+            await Task.Delay(delayToReachColdStart);
+#endif
         }
 
         private async Task<TResult> CallInternalAsync<TPayload, TResult>(TPayload payload)
         {
+#if READY_DEVELOPMENT && EMULATE_COLDSTART
+            var callSw = new Stopwatch();
+            callSw.Start();
+#endif
             UnityEngine.Debug.Log(mCallAddress);
             var request = new HttpRequestMessage(
                     HttpMethod.Post,
@@ -172,6 +187,11 @@ namespace RGN.Impl.Firebase.Core.FunctionsHttpClient
                 return (TResult)(object)result;
             }
             var stream = await response.Content.ReadAsStreamAsync();
+#if READY_DEVELOPMENT && EMULATE_COLDSTART
+            callSw.Stop();
+            int delayToReachColdStart = Math.Max(0, COLD_START_EMULATE_DELAY - (int)callSw.ElapsedMilliseconds);
+            await Task.Delay(delayToReachColdStart);
+#endif
             if (mActAsACallable)
             {
                 var dict = mJson.FromJson<Dictionary<object, TResult>>(stream);
