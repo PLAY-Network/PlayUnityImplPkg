@@ -12,8 +12,10 @@
     "precompiledReferences": [
         "RGNCore.dll",
         "Newtonsoft.Json.dll",
-        "Firebase.Auth.dll",
         "Firebase.App.dll",
+        "Firebase.Analytics.dll",
+        "Firebase.DynamicLinks.dll",
+        "Firebase.Messaging.dll",
         "RGNSignInGuest.dll",
         "Unity.Tasks.dll"
     ],
