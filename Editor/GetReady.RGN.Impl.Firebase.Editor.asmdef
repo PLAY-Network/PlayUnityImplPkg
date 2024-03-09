@@ -1,7 +1,9 @@
 {
     "name": "GetReady.RGN.Impl.Firebase.Editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:f4b4456533ec44545a2b0ce9b2760b49"
+    ],
     "includePlatforms": [
         "Editor"
     ],
