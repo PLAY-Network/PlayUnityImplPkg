@@ -1,12 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
-using RGN.Attributes;
+using RGN.ImplDependencies.Core;
 using RGN.ImplDependencies.Core.DynamicLinks;
 
 namespace RGN.Modules.DynamicLinks.Runtime
 {
-    [InjectImplDependency(typeof(IDynamicLinks))]
-    public sealed class DynamicLinks : IDynamicLinks
+    public sealed class DynamicLinks : IDynamicLinks, IImpl<IDynamicLinks>
     {
         private readonly List<DynamicLinkReceivedEventArgsBinder> mDynamicLinkListeners = new List<DynamicLinkReceivedEventArgsBinder>();
 

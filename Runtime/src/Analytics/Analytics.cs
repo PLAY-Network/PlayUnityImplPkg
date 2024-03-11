@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Firebase.Analytics;
-using RGN.Attributes;
 using RGN.ImplDependencies.Core;
 
 namespace RGN.Modules.Analytics.Runtime
 {
-    [InjectImplDependency(typeof(IAnalytics))]
-    public sealed class Analytics : IAnalytics
+    public sealed class Analytics : IAnalytics, IImpl<IAnalytics>
     {
         private readonly List<Parameter> mLogEventParams = new List<Parameter>();
         private bool _disabled;

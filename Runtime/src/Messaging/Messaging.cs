@@ -1,12 +1,11 @@
-using RGN.Attributes;
-using RGN.ImplDependencies.Core.Messaging;
 using System;
 using System.Collections.Generic;
+using RGN.ImplDependencies.Core;
+using RGN.ImplDependencies.Core.Messaging;
 
 namespace RGN.Modules.Messaging.Runtime
 {
-    [InjectImplDependency(typeof(IMessaging))]
-    public sealed class Messaging : IMessaging
+    public sealed class Messaging : IMessaging, IImpl<IMessaging>
     {
         private readonly List<TokenReceivedEventArgsBinder> mTokenListeners = new List<TokenReceivedEventArgsBinder>();
         private readonly List<MessageReceivedEventArgsBinder> mMessageListeners = new List<MessageReceivedEventArgsBinder>();

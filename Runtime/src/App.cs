@@ -1,18 +1,16 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using Firebase;
-using RGN.Attributes;
 using RGN.ImplDependencies.Core;
 using DependencyStatus = RGN.ImplDependencies.Core.DependencyStatus;
 
 namespace RGN.Impl.Firebase
 {
-    [InjectImplDependency(typeof(IApp))]
-    public class App : IApp
+    public class App : IApp, IImpl<IApp>
     {
         private static string sCachedValue;
-        
+
         public async Task<DependencyStatus> CheckAndFixDependenciesAsync()
         {
             var status = await FirebaseApp.CheckAndFixDependenciesAsync();
@@ -25,7 +23,7 @@ namespace RGN.Impl.Firebase
             {
                 return sCachedValue;
             }
-            
+
             Type versionInfoType = Type.GetType("Firebase.VersionInfo, Firebase.App");
             if (versionInfoType != null)
             {
