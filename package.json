@@ -28,11 +28,7 @@
     "/Runtime.meta",
     "/Samples",
     "/Samples.meta",
-    "/Samples~",
-    "/Editor",
-    "/Editor.meta",
-    "/link.xml",
-    "/link.xml.meta"
+    "/Samples~"
   ],
   "samples": [
     {
