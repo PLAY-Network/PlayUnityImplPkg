@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Firebase.Analytics;
 using RGN.ImplDependencies.Core;
@@ -10,9 +11,11 @@ namespace RGN.Modules.Analytics.Runtime
         private readonly List<Parameter> mLogEventParams = new List<Parameter>();
         private bool _disabled;
 
-        public Task<string> GetAnalyticsInstanceIdAsync()
+        public async Task<string> GetAnalyticsInstanceIdAsync(CancellationToken cancellationToken = default)
         {
-            return FirebaseAnalytics.GetAnalyticsInstanceIdAsync();
+            string analyticsId = await FirebaseAnalytics.GetAnalyticsInstanceIdAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+            return analyticsId;
         }
         public void Init()
         {
