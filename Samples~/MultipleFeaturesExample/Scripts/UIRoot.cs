@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using RGN.Impl.Firebase;
+using RGN.Modules.Marketplace;
 using RGN.Modules.Messaging;
 using RGN.UI;
 using TMPro;
@@ -8,7 +9,7 @@ using UnityEngine.UI;
 
 namespace RGN.Samples
 {
-    public class UIRoot : IUIScreen, IUserProfileClient, IVirtualItemsExampleClient
+    public class UIRoot : IUIScreen, IUserProfileClient, IVirtualItemsExampleClient, IInventoryExampleClient
     {
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private TextMeshProUGUI _titleText;
@@ -39,6 +40,7 @@ namespace RGN.Samples
             base.InitAsync();
             _rgnFrame.GetScreen<UserProfileExample>().SetUserProfileClient(this);
             _rgnFrame.GetScreen<VirtualItemsExample>().SetVirtualItemsExampleClient(this);
+            _rgnFrame.GetScreen<InventoryExample>().SetInventoryExampleClient(this);
             return Task.CompletedTask;
         }
         protected override void Dispose(bool disposing)
@@ -120,6 +122,10 @@ namespace RGN.Samples
         Task IVirtualItemsExampleClient.UpdateUserProfileAsync()
         {
             return _rgnFrame.GetScreen<UserProfileExample>().ReloadUserProfileAsync();
+        }
+        void IInventoryExampleClient.OpenMarketpace()
+        {
+            MarketplaceModule.I.OpenMarketpace();
         }
 
         private void SetUserLoggedIn(bool loggedInWithEmail)
