@@ -1,5 +1,6 @@
 using System;
 using System.Reflection;
+using System.Threading;
 using System.Threading.Tasks;
 using Firebase;
 using RGN.ImplDependencies.Core;
@@ -11,9 +12,10 @@ namespace RGN.Impl.Firebase
     {
         private static string sCachedValue;
 
-        public async Task<DependencyStatus> CheckAndFixDependenciesAsync()
+        public async Task<DependencyStatus> CheckAndFixDependenciesAsync(CancellationToken cancellationToken = default)
         {
             var status = await FirebaseApp.CheckAndFixDependenciesAsync();
+            cancellationToken.ThrowIfCancellationRequested();
             return (DependencyStatus)((int)status);
         }
 
