@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using RGN.ImplDependencies.Core;
 using RGN.ImplDependencies.Core.Messaging;
 
@@ -29,7 +30,6 @@ namespace RGN.Modules.Messaging.Runtime
                 mTokenListeners.Remove(listener);
             }
         }
-
         event Action<object, IMessageReceivedEventArgs> IMessaging.MessageReceived
         {
             add
@@ -48,6 +48,26 @@ namespace RGN.Modules.Messaging.Runtime
                 listener.Dispose();
                 mMessageListeners.Remove(listener);
             }
+        }
+        Task IMessaging.TopicSubscribeAsync(string topic)
+        {
+            return Firebase.Messaging.FirebaseMessaging.SubscribeAsync(topic);
+        }
+        Task IMessaging.TopicUnsubscribeAsync(string topic)
+        {
+            return Firebase.Messaging.FirebaseMessaging.UnsubscribeAsync(topic);
+        }
+        Task IMessaging.RequestPermissionAsync()
+        {
+            return Firebase.Messaging.FirebaseMessaging.RequestPermissionAsync();
+        }
+        Task<string> IMessaging.GetTokenAsync()
+        {
+            return Firebase.Messaging.FirebaseMessaging.GetTokenAsync();
+        }
+        Task IMessaging.DeleteTokenAsync()
+        {
+            return Firebase.Messaging.FirebaseMessaging.DeleteTokenAsync();
         }
     }
 }
