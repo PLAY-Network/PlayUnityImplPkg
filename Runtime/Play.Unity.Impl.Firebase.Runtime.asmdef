@@ -1,5 +1,5 @@
 {
-    "name": "GetReady.RGN.Impl.Firebase.Runtime",
+    "name": "Play.Unity.Impl.Firebase.Runtime",
     "rootNamespace": "RGN.Impl.Firebase",
     "references": [
         "GUID:cf87a66721c783241b810ce809921a27",
@@ -10,13 +10,12 @@
     "allowUnsafeCode": false,
     "overrideReferences": true,
     "precompiledReferences": [
-        "RGNCore.dll",
         "Newtonsoft.Json.dll",
         "Firebase.App.dll",
         "Firebase.Analytics.dll",
         "Firebase.Messaging.dll",
-        "RGNSignInGuest.dll",
-        "Unity.Tasks.dll"
+        "Core.dll",
+        "SignInGuest.dll"
     ],
     "autoReferenced": true,
     "defineConstraints": [],
