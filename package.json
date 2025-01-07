@@ -1,6 +1,6 @@
 ﻿{
   "name": "io.play.unity.impl",
-  "displayName": "PLAY SDK. Firebase Implementation",
+  "displayName": "PLAY SDK Implementation",
   "version": "0.16.0",
   "unity": "2020.3",
   "description": "The PLAY SDK is building mobile-first Web3 tools and technologies to democratize access to game creation.",
